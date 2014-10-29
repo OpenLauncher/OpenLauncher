@@ -1,7 +1,8 @@
-ATLauncher
+UntitledLauncher
 ====================================
 
 ### What is it?
+UntitledLauncher is a fork of the ATLauncher. There will be more info to come soon!
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
 
