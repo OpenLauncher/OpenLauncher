@@ -210,8 +210,11 @@ public class Settings {
     }
 
     public void loadEverything() {
-        setupServers(); // Setup the servers available to use in the Launcher
-        loadServerProperty(false); // Get users Server preference
+        //TODO this is where i load the server into the varible. It works!
+        //setupServers(); // Setup the servers available to use in the Launcher
+        //loadServerProperty(false); // Get users Server preference
+        server =  new Server("Rushmead", "rushmead.playat.ch", false, true) ;
+
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
