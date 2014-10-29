@@ -82,6 +82,7 @@ import java.util.concurrent.Executors;
  *
  * @author Ryan
  */
+//Setting the server line 200
 public class Settings {
     public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
@@ -213,7 +214,8 @@ public class Settings {
         //TODO this is where i load the server into the varible. It works!
         //setupServers(); // Setup the servers available to use in the Launcher
         //loadServerProperty(false); // Get users Server preference
-        server =  new Server("Rushmead", "rushmead.playat.ch", false, true) ;
+
+        server = new Server("Rushmead", "rushmead.playat.ch", false, true) ;
 
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
@@ -1237,7 +1239,8 @@ public class Settings {
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
-            properties.setProperty("server", this.server.getName());
+            //This is disabled becuase we dont use servers
+//            properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");

@@ -73,6 +73,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
+//Fixed at 564
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private final Gson gson; // GSON Parser
@@ -561,12 +562,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             fileSizes = new HashMap<String, Integer>();
             String returnValue = null;
-            try {
-                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
-                        "files");
-            } catch (IOException e1) {
-                App.settings.logStackTrace(e1);
-            }
+//            try {
+//                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
+//                        "files");
+//            } catch (IOException e1) {
+//                App.settings.logStackTrace(e1);
+//            }
             if (returnValue == null) {
                 LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
             }

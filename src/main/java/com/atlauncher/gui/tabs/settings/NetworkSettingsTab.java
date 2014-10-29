@@ -27,6 +27,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
+//In this file I have removed the server selector becuase we only have 1 server :) 59 71
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
@@ -55,7 +56,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         downloadServerLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.downloadserver") + ":",
                 HELP_ICON, App.settings.getLocalizedString("settings.downloadserverhelp"));
-        add(downloadServerLabel, gbc);
+        //add(downloadServerLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
@@ -67,7 +68,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
             }
         }
         server.setSelectedItem(App.settings.getOriginalServer());
-        add(server, gbc);
+        //add(server, gbc);
 
         // Concurrent Connection Settings
         gbc.gridx = 0;
