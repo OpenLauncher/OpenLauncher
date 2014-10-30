@@ -21,6 +21,7 @@ import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
+import modmusst50.mods.CustomPacks.GuiUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -110,7 +111,7 @@ implements RelocalizationListener{
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
-        this.tabs = Arrays.asList(new Tab[]{newsTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab});
+        this.tabs = Arrays.asList(new Tab[]{newsTab, packsTab, instancesTab, GuiUtils.customPacksTab, accountsTab, toolsTab, settingsTab});
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
         for (Tab tab : this.tabs) {
