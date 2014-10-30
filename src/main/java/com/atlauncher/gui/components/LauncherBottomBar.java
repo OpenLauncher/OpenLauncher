@@ -1,7 +1,7 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.components;
@@ -45,16 +45,14 @@ import java.awt.event.ItemListener;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+    private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
-
     private Account fillerAccount;
     private boolean dontSave = false;
-
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
-    private final JButton submitError = new JButton("Submit Bug");
     private JComboBox<Account> username;
 
     private JLabel statusIcon;
@@ -120,8 +118,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         updateData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("common" +
-                        ".checkingforupdates"), 0, App.settings.getLocalizedString("common.checkingforupdates"),
+                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
+                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"),
                         "Aborting Update Check!");
                 dialog.addThread(new Thread() {
                     public void run() {
@@ -206,19 +204,19 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     public void updateStatus(Status status) {
         switch (status) {
             case UNKNOWN:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
                 break;
             case ONLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.online"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
                 break;
             case OFFLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.offline"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
                 break;
             case PARTIAL:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.partial"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
                 break;
             default:

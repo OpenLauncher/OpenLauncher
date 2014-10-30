@@ -1,21 +1,25 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
- *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This work is licensed under the GNU General Public License v3.0.
+ * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt
  */
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -25,13 +29,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 
 public class EditModsDialog extends JDialog {
     private static final long serialVersionUID = 7004414192679481818L;
@@ -46,8 +43,8 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(final Instance instance) {
-        super(App.settings.getParent(), App.settings.getLocalizedString("instance.editingmods", instance.getName()),
-                ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("instance.editingmods",
+                instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -79,11 +76,11 @@ public class EditModsDialog extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
-        topLabelLeft = new JLabel(App.settings.getLocalizedString("instance.enabledmods"));
+        topLabelLeft = new JLabel(Language.INSTANCE.localize("instance.enabledmods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setLeftComponent(topLabelLeft);
 
-        topLabelRight = new JLabel(App.settings.getLocalizedString("instance.disabledmods"));
+        topLabelRight = new JLabel(Language.INSTANCE.localize("instance.disabledmods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setRightComponent(topLabelRight);
 
@@ -117,15 +114,14 @@ public class EditModsDialog extends JDialog {
         bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        addButton = new JButton(App.settings.getLocalizedString("instance.addmod"));
+        addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = new FileChooserDialog(App.settings.getLocalizedString("instance.addmod"),
-                        App.settings.getLocalizedString("common.mod"), App.settings.getLocalizedString("common.add"),
-                        App.settings.getLocalizedString("instance.typeofmod"),
-                        App.settings.getLocalizedString("instance.selectmodtype"), new String[]{"Mods Folder",
-                        "Jar Mod", "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"},
-                        new String[]{"jar", "zip", "litemod"});
+                FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"),
+                        Language.INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"),
+                        Language.INSTANCE.localize("instance.typeofmod"), Language.INSTANCE.localize("instance" +
+                        ".selectmodtype"), new String[]{"Mods Folder", "Jar Mod", "CoreMods Mod", "Texture Pack",
+                        "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
                     boolean reload = false;
@@ -163,7 +159,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(addButton);
 
-        enableButton = new JButton(App.settings.getLocalizedString("instance.enablemod"));
+        enableButton = new JButton(Language.INSTANCE.localize("instance.enablemod"));
         enableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 enableMods();
@@ -171,7 +167,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(enableButton);
 
-        disableButton = new JButton(App.settings.getLocalizedString("instance.disablemod"));
+        disableButton = new JButton(Language.INSTANCE.localize("instance.disablemod"));
         disableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 disableMods();
@@ -179,7 +175,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(disableButton);
 
-        removeButton = new JButton(App.settings.getLocalizedString("instance.removemod"));
+        removeButton = new JButton(Language.INSTANCE.localize("instance.removemod"));
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 removeMods();
@@ -187,7 +183,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(removeButton);
 
-        closeButton = new JButton(App.settings.getLocalizedString("common.close"));
+        closeButton = new JButton(Language.INSTANCE.localize("common.close"));
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();

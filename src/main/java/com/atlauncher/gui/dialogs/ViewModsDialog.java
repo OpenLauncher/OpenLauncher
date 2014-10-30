@@ -1,3 +1,9 @@
+/**
+ * Copyright 2013 and onwards by ATLauncher and Contributors
+ *
+ * This work is licensed under the GNU General Public License v3.0.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ */
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
@@ -6,6 +12,11 @@ import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.card.ModCard;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,11 +29,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 public final class ViewModsDialog extends JDialog {
     private final Pack pack;
@@ -32,7 +38,7 @@ public final class ViewModsDialog extends JDialog {
     private final List<ModCard> cards = new LinkedList<ModCard>();
 
     public ViewModsDialog(Pack pack) {
-        super(App.settings.getParent(), App.settings.getLocalizedString("pack.mods", pack.getName()),
+        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("pack.mods", pack.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 

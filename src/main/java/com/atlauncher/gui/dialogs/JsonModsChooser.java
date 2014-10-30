@@ -1,7 +1,7 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.dialogs;
@@ -258,8 +258,8 @@ public class JsonModsChooser extends JDialog {
                                 String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
 
                                 if (message != null) {
-                                    String[] options = {App.settings.getLocalizedString("common.yes"),
-                                            App.settings.getLocalizedString("common.no")};
+                                    String[] options = {Language.INSTANCE.localize("common.yes"),
+                                            Language.INSTANCE.localize("common.no")};
                                     int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                                             "<html>" + message + "<br/>" +
                                                     Language.INSTANCE.localize("instance.warningsure") + "</html>",

@@ -1,17 +1,14 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
- *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This work is licensed under the GNU General Public License v3.0.
+ * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt
  */
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JDialog;
@@ -82,13 +79,13 @@ public class ProgressDialog extends JDialog {
     public void setTotalTasksToDo(int tasksToDo) {
         this.tasksToDo = tasksToDo;
         this.tasksDone = 0;
-        this.progressBar.setString("0/" + this.tasksToDo + " " + App.settings.getLocalizedString("common.tasksdone"));
+        this.progressBar.setString("0/" + this.tasksToDo + " " + Language.INSTANCE.localize("common.tasksdone"));
         this.progressBar.setStringPainted(true);
         this.progressBar.setMaximum(this.tasksToDo);
     }
 
     public void doneTask() {
-        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + App.settings.getLocalizedString("common" +
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + Language.INSTANCE.localize("common" + "" +
                 ".tasksdone"));
         this.progressBar.setValue(this.tasksDone);
     }

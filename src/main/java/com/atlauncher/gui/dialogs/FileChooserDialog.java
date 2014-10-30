@@ -1,12 +1,13 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
@@ -80,7 +81,7 @@ public class FileChooserDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        selectButton = new JButton(App.settings.getLocalizedString("common.select"));
+        selectButton = new JButton(Language.INSTANCE.localize("common.select"));
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

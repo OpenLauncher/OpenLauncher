@@ -1,12 +1,12 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.data.openmods;
 
-import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -73,10 +73,10 @@ public class OpenEyeReportResponse {
      */
     public String getNoteDisplay() {
         if (this.hasNote()) {
-            return App.settings.getLocalizedString("instance.openeyehasnote") + "<br/><br/>" + Utils
-                    .splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
+            return Language.INSTANCE.localize("instance.openeyehasnote") + "<br/><br/>" + Utils.splitMultilinedString
+                    (this.getNote(), 100, "<br/>") + "<br/><br/>";
         } else {
-            return App.settings.getLocalizedString("instance.openeyenonote") + "<br/><br/>";
+            return Language.INSTANCE.localize("instance.openeyenonote") + "<br/><br/>";
         }
     }
 }

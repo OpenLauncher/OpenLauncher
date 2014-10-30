@@ -1,7 +1,7 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.data;
@@ -99,28 +99,28 @@ public class MinecraftServer {
         return this.name;
     }
 
-    public String getHost() {
-        return this.host;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public QueryVersion getQueryVersion() {
-        return this.queryVersion;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getHost() {
+        return this.host;
     }
 
     public void setHost(String host) {
         this.host = host;
     }
 
+    public int getPort() {
+        return this.port;
+    }
+
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public QueryVersion getQueryVersion() {
+        return this.queryVersion;
     }
 
     public void setQueryVersion(QueryVersion queryVersion) {
@@ -134,10 +134,10 @@ public class MinecraftServer {
 
     private String getStatusLocalization() {
         if (this.playersOnline == -1) {
-            return App.settings.getLocalizedString("tools.serverchecker.offline");
+            return Language.INSTANCE.localize("tools.serverchecker.offline");
         } else {
-            return App.settings.getLocalizedString("tools.serverchecker.online") + " - " + this
-                    .getPrintablePlayersOnline() + " Players";
+            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
+                    () + " Players";
         }
     }
 

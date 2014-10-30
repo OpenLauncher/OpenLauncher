@@ -1,12 +1,13 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -26,7 +27,7 @@ public abstract class AbstractToolPanel extends JPanel {
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel();
 
-    protected final JButton LAUNCH_BUTTON = new JButton(App.settings.getLocalizedString("tools.launch"));
+    protected final JButton LAUNCH_BUTTON = new JButton(Language.INSTANCE.localize("tools.launch"));
 
     public AbstractToolPanel() {
         setLayout(new BorderLayout());

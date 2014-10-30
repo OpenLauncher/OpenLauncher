@@ -1,7 +1,7 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.components;
@@ -89,9 +89,10 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         killMinecraftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                        .settings.getLocalizedString("console.killsure", "<br/><br/>") + "</p></html>",
-                        Language.INSTANCE.localize("console.kill"), JOptionPane.YES_NO_OPTION);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("console.killsure",
+                                "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("console.kill"),
+                        JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();
                     killMinecraftButton.setVisible(false);

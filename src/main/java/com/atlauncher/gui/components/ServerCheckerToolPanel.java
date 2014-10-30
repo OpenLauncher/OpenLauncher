@@ -1,12 +1,13 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
@@ -24,10 +25,10 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
      */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(App.settings.getLocalizedString("tools.serverchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.serverchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(App
-            .settings.getLocalizedString("tools.serverchecker.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.serverchecker.info"), 60, "<br>") + "</p></html>");
 
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);

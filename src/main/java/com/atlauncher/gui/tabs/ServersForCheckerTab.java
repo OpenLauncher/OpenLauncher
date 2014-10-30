@@ -1,12 +1,13 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2013 and onwards by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * This work is licensed under the GNU General Public License v3.0.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
 
@@ -34,8 +35,8 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     private static final long serialVersionUID = 3385411077046354453L;
 
     private final JPopupMenu CONTEXT_MENU = new JPopupMenu();
-    private final JMenuItem EDIT_BUTTON = new JMenuItem(App.settings.getLocalizedString("common.edit"));
-    private final JMenuItem DELETE_BUTTON = new JMenuItem(App.settings.getLocalizedString("common.delete"));
+    private final JMenuItem EDIT_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.edit"));
+    private final JMenuItem DELETE_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.delete"));
 
     private DefaultListModel<MinecraftServer> listModel;
     private JList serverList;
