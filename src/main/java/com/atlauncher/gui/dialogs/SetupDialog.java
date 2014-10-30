@@ -111,7 +111,13 @@ public class SetupDialog extends JDialog {
             }
         });
 
-        setVisible(true);
+        //setVisible(true);
+
+        //I add this because we dont need to know what the user wants
+        App.settings.setLanguage("English");//We only use english
+        App.settings.setEnableLeaderboards(false);//We dont use leaderboards
+        App.settings.saveProperties();
+        dispose();
     }
 
 }
