@@ -8,7 +8,10 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
+import modmusst50.mods.CustomPacks.CustomPacksTab;
+import modmusst50.mods.CustomPacks.IMod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -796,8 +799,21 @@ public class Pack {
                     if (element.getAttribute("recommended").equalsIgnoreCase("no")) {
                         recommended = false;
                     }
+                    boolean caninstall = false;
+                    if(element.hasAttribute("customMod")){
+                        if(element.getAttribute("customMod").equalsIgnoreCase("yes")){
+                            for (IMod imod: CustomPacksTab.modsToUse) {
+                                if(file.equals(imod.fileName())){
+                                    caninstall = true;
+                                }
+                            }
+                        }
+                    } else {
+                        caninstall = true;
+                    }
 
                     String description = element.getAttribute("description");
+                    if(caninstall)
                     mods.add(new Mod(name, version, url, file, website, donation, colour, warning, md5, type,
                             extractTo, extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck,
                             client, server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,

@@ -57,7 +57,7 @@ implements RelocalizationListener{
 
         App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 575));
-        setTitle("ATLauncher " + Constants.VERSION);
+        setTitle(Constants.launcherName + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -91,7 +91,7 @@ implements RelocalizationListener{
     }
 
     public void updateTitle(String str){
-        setTitle("ATLauncher " + Constants.VERSION + " - " + str);
+        setTitle(Constants.launcherName + Constants.VERSION + " - " + str);
     }
 
     /**

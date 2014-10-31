@@ -2,6 +2,7 @@ package com.atlauncher.data;
 
 
 public class Constants {
+    public static final String launcherName = "UntitledLaunhcer";
     public static final LauncherVersion VERSION = new LauncherVersion(1, 0, 0, 0);
     public static final String API_BASE_URL = "";
     public static final String PASTE_CHECK_URL = "";
