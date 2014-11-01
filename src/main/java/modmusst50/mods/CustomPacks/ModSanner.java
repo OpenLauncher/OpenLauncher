@@ -13,10 +13,12 @@ public class ModSanner {
 
     public static ArrayList<IMod> customMods = new ArrayList<IMod>();
 
-    public static void loadCustomMods() throws Exception {
-        JSONParser parser = new JSONParser();
+    public static ArrayList<IRepo> repoVersions = new ArrayList<IRepo>();
 
-        JSONArray a = (JSONArray) parser.parse(new FileReader(new File(App.settings.getJSONDir(), "mods.json")));
+    public static void loadCustomMods(String repo) throws Exception {
+        customMods.clear();
+        JSONParser parser = new JSONParser();
+        JSONArray a = (JSONArray) parser.parse(new FileReader(new File(App.settings.getJSONDir(), "mods" + repo + ".json")));
 
         for (Object o : a) {
             JSONObject jsonObject = (JSONObject) o;
@@ -48,8 +50,39 @@ public class ModSanner {
             };
             customMods.add(iMod);
         }
-
     }
 
+    //This downloads all of the repo versions and then saves that in an array list.
+    public static void loadRepo() throws Exception {
+        JSONParser parser = new JSONParser();
+
+        JSONArray a = (JSONArray) parser.parse(new FileReader(new File(App.settings.getJSONDir(), "repo.json")));
+
+        for (Object o : a) {
+            JSONObject jsonObject = (JSONObject) o;
+
+            final String version = (String) jsonObject.get("version");
+            final String minecraftVersion = (String) jsonObject.get("minecraftVersion");
+            final String forgeVersion = (String) jsonObject.get("forgeVersion");
+            IRepo iRepo = new IRepo() {
+
+                @Override
+                public String version() {
+                    return version;
+                }
+
+                @Override
+                public String minecraftVersion() {
+                    return minecraftVersion;
+                }
+
+                @Override
+                public String forgeVersion() {
+                    return forgeVersion;
+                }
+            };
+            repoVersions.add(iRepo);
+        }
+    }
 
 }

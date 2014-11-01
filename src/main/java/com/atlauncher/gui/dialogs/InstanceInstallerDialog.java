@@ -463,4 +463,17 @@ public class InstanceInstallerDialog extends JDialog {
         add(bottom, BorderLayout.SOUTH);
         setVisible(true);
     }
+    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, String version) {
+        this(object, isUpdate, isServer);
+        versionsDropDown.setSelectedItem(version);
+    }
+
+    public InstanceInstallerDialog(Object object, String version) {
+        this(object, false, false, version);
+    }
+
+    public InstanceInstallerDialog(Pack pack, boolean isServer, String version) {
+        this((Object) pack, false, true, version);
+    }
+
 }
