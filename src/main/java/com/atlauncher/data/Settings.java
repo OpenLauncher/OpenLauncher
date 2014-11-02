@@ -1,8 +1,19 @@
-/**
- * Copyright 2013 and onwards by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the GNU General Public License v3.0.
- * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -62,6 +73,7 @@ import java.net.Proxy.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -216,7 +228,6 @@ public class Settings {
         //loadServerProperty(false); // Get users Server preference
 
         server = new Server("Rushmead", "rushmead.playat.ch", false, true) ;
-
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -1335,6 +1346,42 @@ public class Settings {
      */
     private void setupServers() {
         this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+    }
+
+    private void checkCreeperRepoEdges() {
+        LogManager.debug("Checking CreeperRepo edges for availability");
+        // Check CreeperHosts available edges (servers)
+        JSONParser parser = new JSONParser();
+        try {
+            Downloadable download = new Downloadable("http://www.creeperrepo.net/edges.json", false);
+            String response = download.getContents();
+            if (response != null) {
+                Object obj = parser.parse(response);
+                JSONObject jsonObject = (JSONObject) obj;
+                Collection<String> values = jsonObject.values();
+                for (Server server : this.servers) {
+                    if (!server.isMaster() && !server.getName().equalsIgnoreCase("Auto")) {
+                        if (!values.contains(server.getHost())) {
+                            LogManager.warn("Server " + server.getHost() + " is no longer available!");
+                            server.disableServer();
+                        }
+                    }
+                }
+            }
+
+            ArrayList<Server> newServers = new ArrayList<Server>();
+
+            for (Server server : this.servers) {
+                if (!server.isDisabled()) {
+                    newServers.add(server);
+                }
+            }
+
+            this.servers = newServers;
+        } catch (ParseException e) {
+            this.logStackTrace(e);
+        }
+        LogManager.debug("Finished checking CreeperRepo edges for availability");
     }
 
     public boolean disableServerGetNext() {
@@ -2488,11 +2535,7 @@ public class Settings {
     }
 
     public void setJavaPath(String javaPath) {
-        if (javaPath.equalsIgnoreCase(Utils.getJavaHome())) {
-            this.usingCustomJavaPath = false;
-        } else {
-            this.usingCustomJavaPath = true;
-        }
+        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(Utils.getJavaHome());
         this.javaPath = javaPath;
     }
 

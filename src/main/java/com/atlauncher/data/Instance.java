@@ -1,8 +1,19 @@
-/**
- * Copyright 2013 and onwards by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the GNU General Public License v3.0.
- * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -424,7 +435,7 @@ public class Instance implements Cloneable {
      * @return true if Leaderboard are enabled and statistics can be sent
      */
     public boolean isLeaderboardsEnabled() {
-        return (this.realPack == null ? false : this.realPack.isLeaderboardsEnabled());
+        return (this.realPack != null && this.realPack.isLeaderboardsEnabled());
     }
 
     /**
@@ -434,7 +445,7 @@ public class Instance implements Cloneable {
      * @return true if Logging is enabled
      */
     public boolean isLoggingEnabled() {
-        return (this.realPack == null ? false : this.realPack.isLoggingEnabled());
+        return (this.realPack != null && this.realPack.isLoggingEnabled());
     }
 
     /**
@@ -690,7 +701,7 @@ public class Instance implements Cloneable {
      * @see com.atlauncher.data.Pack#canInstall
      */
     public boolean canInstall() {
-        return (this.realPack == null ? false : this.realPack.canInstall());
+        return (this.realPack != null && this.realPack.canInstall());
     }
 
     /**
@@ -1126,16 +1137,18 @@ public class Instance implements Cloneable {
                         BufferedReader br = new BufferedReader(isr);
                         String line;
                         while ((line = br.readLine()) != null) {
-                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
-                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
-                            if (account.hasAccessToken()) {
-                                line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                            }
-                            if (account.hasClientToken()) {
-                                line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
-                            }
-                            if (account.hasUUID()) {
-                                line = line.replace(account.getUUID(), "**UUID**");
+                            if (!LogManager.showDebug) {
+                                line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
+                                line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
+                                if (account.hasAccessToken()) {
+                                    line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                                }
+                                if (account.hasClientToken()) {
+                                    line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
+                                }
+                                if (account.hasUUID()) {
+                                    line = line.replace(account.getUUID(), "**UUID**");
+                                }
                             }
                             LogManager.minecraft(line);
                         }

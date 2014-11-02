@@ -1,8 +1,19 @@
-/**
- * Copyright 2013 and onwards by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the GNU General Public License v3.0.
- * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.workers;
 
@@ -268,10 +279,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.jsonVersion != null) {
             return this.jsonVersion.hasActions();
         } else {
-            if (this.actions == null) {
-                return false;
-            }
-            return this.actions.size() != 0;
+            return this.actions != null && this.actions.size() != 0;
         }
     }
 
@@ -312,10 +320,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean wasModInstalled(String mod) {
-        if (instance != null) {
-            return instance.wasModInstalled(mod);
-        }
-        return false;
+        return instance != null && instance.wasModInstalled(mod);
     }
 
     public boolean isReinstall() {
@@ -718,8 +723,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     String after = element.getAttribute("after");
                     String saveAs = element.getAttribute("saveas");
-                    Boolean client = (element.getAttribute("client").equalsIgnoreCase("yes") ? true : false);
-                    Boolean server = (element.getAttribute("server").equalsIgnoreCase("yes") ? true : false);
+                    Boolean client = element.getAttribute("client").equalsIgnoreCase("yes");
+                    Boolean server = element.getAttribute("server").equalsIgnoreCase("yes");
                     Action thing = null;
                     if (element.hasAttribute("type")) {
                         thing = new Action(action, type, after, saveAs, client, server);

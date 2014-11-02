@@ -1,8 +1,19 @@
-/**
- * Copyright 2013 and onwards by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the GNU General Public License v3.0.
- * Link to license: http://www.gnu.org/licenses/gpl-3.0.txt.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
 
@@ -15,7 +26,6 @@ import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
@@ -34,7 +44,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
+public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
@@ -65,7 +75,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
-        ReskinManager.addListener(this);
     }
 
     @Override
@@ -134,13 +143,5 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     public void onRelocalization() {
         copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
-    }
-
-    @Override
-    public void onReskin() {
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
-        console.setBackground(App.THEME.getBaseColor());
     }
 }
