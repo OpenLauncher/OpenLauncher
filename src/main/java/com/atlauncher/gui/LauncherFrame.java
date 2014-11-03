@@ -24,26 +24,16 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
-import com.atlauncher.gui.tabs.AccountsTab;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.gui.tabs.SettingsTab;
-import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.gui.tabs.*;
 import com.atlauncher.utils.Utils;
-import modmusst50.mods.CustomPacks.GuiUtils;
+import modmuss50.mods.CustomPacks.GuiUtils;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public final class LauncherFrame

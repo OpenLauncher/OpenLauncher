@@ -1,4 +1,4 @@
-package modmusst50.mods.CustomPacks;
+package modmuss50.mods.CustomPacks;
 
 /**
  * Created by Mark on 30/10/2014.

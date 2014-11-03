@@ -19,10 +19,9 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
-import modmusst50.mods.CustomPacks.CustomPacksTab;
-import modmusst50.mods.CustomPacks.IMod;
+import modmuss50.mods.CustomPacks.CustomPacksTab;
+import modmuss50.mods.CustomPacks.IMod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

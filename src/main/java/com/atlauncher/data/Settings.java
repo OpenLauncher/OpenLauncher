@@ -45,47 +45,19 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -219,7 +191,7 @@ public class Settings {
         instancesDataFile = new File(configsDir, "instancesdata");
         checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, "ATLauncher.conf");
+        propertiesFile = new File(configsDir, Constants.launcherName + ".conf");
     }
 
     public void loadEverything() {
@@ -228,9 +200,9 @@ public class Settings {
         //loadServerProperty(false); // Get users Server preference
 
         server = new Server("Rushmead", "rushmead.playat.ch", false, true) ;
-        if (hasUpdatedFiles()) {
-            downloadUpdatedFiles(); // Downloads updated files on the server
-        }
+//        if (hasUpdatedFiles()) {
+//            downloadUpdatedFiles(); // Downloads updated files on the server
+//        }
 
         checkForLauncherUpdate();
 
@@ -504,7 +476,7 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable("ATLauncher." + toget, newFile, null, null, true);
+            Downloadable update = new Downloadable(Constants.launcherName + "." + toget, newFile, null, null, true);
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
@@ -661,7 +633,7 @@ public class Settings {
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
                                 "page" +
-                                ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                                ".<br/><br/>Download " + "the update and replace the old" + Constants.launcherName + "file" +
                                 ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
@@ -879,9 +851,9 @@ public class Settings {
     }
 
     public void rotateLogFiles() {
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        File logFile1 = new File(getBaseDir(), Constants.launcherName + "-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), Constants.launcherName + "-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), Constants.launcherName + "-Log-3.txt");
         if (logFile3.exists()) {
             Utils.delete(logFile3);
         }
@@ -978,7 +950,7 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            this.theme = properties.getProperty("theme", "ATLauncher");
+            this.theme = properties.getProperty("theme", Constants.launcherName);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
@@ -1209,7 +1181,7 @@ public class Settings {
                 this.concurrentConnections = 8;
             }
 
-            this.theme = properties.getProperty("theme", "ATLauncher");
+            this.theme = properties.getProperty("theme", Constants.launcherName);
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
@@ -1292,7 +1264,7 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
-            this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
+            this.properties.store(new FileOutputStream(propertiesFile), Constants.launcherName + " Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -2811,7 +2783,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + " ATLauncher/" + Constants.VERSION;
+        return this.userAgent + Constants.launcherName + " /" + Constants.VERSION;
     }
 
     /**

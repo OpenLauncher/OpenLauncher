@@ -1,4 +1,4 @@
-package modmusst50.mods.CustomPacks;
+package modmuss50.mods.CustomPacks;
 
 import com.atlauncher.App;
 import org.json.simple.JSONArray;
