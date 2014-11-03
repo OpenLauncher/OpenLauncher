@@ -200,9 +200,9 @@ public class Settings {
         //loadServerProperty(false); // Get users Server preference
 
         server = new Server("Rushmead", "rushmead.playat.ch", false, true) ;
-//        if (hasUpdatedFiles()) {
-//            downloadUpdatedFiles(); // Downloads updated files on the server
-//        }
+        if (hasUpdatedFiles()) {
+            downloadUpdatedFiles(); // Downloads updated files on the server
+        }
 
         checkForLauncherUpdate();
 
