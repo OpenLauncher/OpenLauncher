@@ -1910,23 +1910,47 @@ public class Utils {
     }
 
     private static String getMACAdressHash() {
-        String returnStr = "";
+        String returnStr = null;
         try {
             InetAddress ip;
             ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-            byte[] mac = network.getHardwareAddress();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
-            returnStr = sb.toString();
 
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            // If network is null, user may be using Linux or something it doesn't support so try alternative way
+            if (network == null) {
+                Enumeration e = NetworkInterface.getNetworkInterfaces();
+
+                while (e.hasMoreElements()) {
+
+                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    Enumeration ee = n.getInetAddresses();
+                    while (ee.hasMoreElements()) {
+                        InetAddress i = (InetAddress) ee.nextElement();
+                        if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
+                            ip = i;
+                        }
+                    }
+                }
+
+                network = NetworkInterface.getByInetAddress(ip);
+            }
+
+            // If network is still null, well you're SOL
+            if (network != null) {
+                byte[] mac = network.getHardwareAddress();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < mac.length; i++) {
+                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                }
+                returnStr = sb.toString();
+            }
         } catch (Exception e) {
             App.settings.logStackTrace(e);
         } finally {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
+
         return getMD5(returnStr);
     }
 }
