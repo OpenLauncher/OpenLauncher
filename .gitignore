@@ -5,6 +5,7 @@
 # Except These
 !/src/
 !/macapp/
+!/gradle/
 !/.gitignore
 !/LICENSE
 !/README.md
@@ -12,3 +13,6 @@
 !/IntelliJ-Coding-Style.xml
 !/UntitledLauncher.iml
 !/libs/
+!/gradlew*
+!/build.gradle
+!/build.properties
