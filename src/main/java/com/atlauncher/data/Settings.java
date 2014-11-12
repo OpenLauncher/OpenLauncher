@@ -72,8 +72,8 @@ public class Settings {
     public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
             EnumTypeAdapterFactory()).registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File
             .class, new FileTypeAdapter()).create();
-    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class,
-            new ColorTypeAdapter()).create();
+    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
+            ColorTypeAdapter()).create();
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
@@ -134,8 +134,8 @@ public class Settings {
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private LauncherConsole console; // The Launcher's Console
-    private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
-    private ArrayList<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
+    private List<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
+    private List<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab packsPanel; // The packs panel
@@ -195,11 +195,8 @@ public class Settings {
     }
 
     public void loadEverything() {
-        //TODO this is where i load the server into the varible. It works!
-        //setupServers(); // Setup the servers available to use in the Launcher
-        //loadServerProperty(false); // Get users Server preference
+        this.server = Constants.SERVERS[0];
 
-        server = new Server("Rushmead", "rushmead.playat.ch", false, true) ;
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -251,9 +248,9 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>") + "</p></html>",
-                    Language.INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>") + "</p></html>", Language
+                    .INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                    .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
@@ -266,9 +263,9 @@ public class Settings {
                     ".ok"), Language.INSTANCE.localize("instance" + "" +
                     ".dontremindmeagain")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>") + "</p></html>",
-                    Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>") + "</p></html>", Language
+                    .INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                    .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
                         ".html");
@@ -285,9 +282,9 @@ public class Settings {
                     ".ok"), Language.INSTANCE.localize("instance" + "" +
                     ".dontremindmeagain")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.java8warning", "<br/><br/>") + "</p></html>",
-                    Language.INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .INSTANCE.localizeWithReplace("settings.java8warning", "<br/><br/>") + "</p></html>", Language
+                    .INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                    .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
                         ".html");
@@ -344,9 +341,9 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>") + "</p></html>",
-                    Language.INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>") + "</p></html>", Language
+                    .INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                    .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
                     if (account.isRemembered()) {
@@ -1071,11 +1068,10 @@ public class Settings {
                         .getMaximumRam() + "MB is available to use!");
                 this.initialMemory = 256; // User tried to allocate too much ram, set it back to
                 // 256MB
-            } else if (this.initialMemory > this.maximumMemory) {
+            } else if (this.initialMemory >= this.maximumMemory) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but maximum ram is " +
                         this.maximumMemory + "MB which is less!");
-                this.initialMemory = 256; // User tried to allocate too much ram, set it back to
-                // 256MB
+                this.initialMemory = 256; // User tried to allocate too much ram, set it back to 256MB
             }
 
             // Default PermGen to 256 for 64 bit systems and 128 for 32 bit systems
@@ -1318,6 +1314,28 @@ public class Settings {
      */
     private void setupServers() {
         this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+    }
+
+    private void findActiveServers() {
+        LogManager.debug("Finding servers to use");
+
+        Downloadable download = new Downloadable(this.getMasterFileURL("launcher/json/servers.json"), false);
+
+        String response = download.getContents();
+
+        java.lang.reflect.Type type = new TypeToken<List<Server>>() {
+        }.getType();
+
+        if (response != null) {
+            try {
+                this.servers = gson.fromJson(response, type);
+            } catch (Exception e) {
+                logStackTrace("Exception when reading in the servers", e);
+                this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+            }
+        }
+
+        LogManager.debug("Finished finding servers to use");
     }
 
     private void checkCreeperRepoEdges() {
@@ -1990,7 +2008,7 @@ public class Settings {
      *
      * @return The Servers available in the Launcher
      */
-    public ArrayList<Server> getServers() {
+    public List<Server> getServers() {
         return this.servers;
     }
 

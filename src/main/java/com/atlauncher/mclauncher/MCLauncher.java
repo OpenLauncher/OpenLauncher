@@ -18,6 +18,7 @@
 package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -112,10 +113,12 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        // Mojang launcher defaults
-        arguments.add("-XX:+UseConcMarkSweepGC");
-        arguments.add("-XX:+CMSIncrementalMode");
-        arguments.add("-XX:-UseAdaptiveSizePolicy");
+        if (App.settings.getJavaParameters().isEmpty()) {
+            // Mojang launcher defaults if user has no custom java arguments
+            arguments.add("-XX:+UseConcMarkSweepGC");
+            arguments.add("-XX:+CMSIncrementalMode");
+            arguments.add("-XX:-UseAdaptiveSizePolicy");
+        }
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
@@ -248,6 +251,7 @@ public class MCLauncher {
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
+        processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
     }
 }
