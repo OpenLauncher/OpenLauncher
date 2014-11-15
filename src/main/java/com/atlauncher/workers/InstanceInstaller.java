@@ -1497,9 +1497,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Extract the configs zip file
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
-        if(!new File(getRootDirectory(), "config").exists()){
-            new File(getRootDirectory(), "config").mkdir();
-        }
         Utils.unzip(configs, getRootDirectory());
         Utils.delete(configs);
     }
