@@ -20,20 +20,16 @@ package com.atlauncher.gui.components;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;
 
-    protected final JButton creeperHostIcon = new SMButton("/assets/image/CreeperHostIcon.png",
-            "CreeperHost - Minecraft servers for ATLauncher packs & more");
+    protected final JButton nodeCraftIcon = new SMButton("/assets/image/NodeCraftIcon.png",
+            "NodeCraft - Setup a Minecraft server with an ATL modpack in less than 60 seconds");
     protected final JButton facebookIcon = new SMButton("/assets/image/FacebookIcon.png", "Facebook");
     protected final JButton githubIcon = new SMButton("/assets/image/GitHubIcon.png", "GitHub");
     protected final JButton twitterIcon = new SMButton("/assets/image/TwitterIcon.png", "Twitter");
@@ -47,7 +43,7 @@ public abstract class BottomBar extends JPanel {
 //        this.setPreferredSize(new Dimension(0, 50));
 //        this.add(this.rightSide, BorderLayout.EAST);
 //        this.setupSocialButtonListeners();
-//        this.rightSide.add(this.creeperHostIcon);
+//        this.rightSide.add(this.nodeCraftIcon);
 //        this.rightSide.add(this.facebookIcon);
 //        this.rightSide.add(this.githubIcon);
 //        this.rightSide.add(this.redditIcon);
@@ -55,10 +51,10 @@ public abstract class BottomBar extends JPanel {
     }
 
     private void setupSocialButtonListeners() {
-        creeperHostIcon.addActionListener(new ActionListener() {
+        nodeCraftIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up CreeperHost");
-                Utils.openBrowser("http://billing.creeperhost.net/link.php?id=7");
+                LogManager.info("Opening Up NodeCraft");
+                Utils.openBrowser("https://nodecraft.com/?ref=atl&utm_source=ATL&utm_medium=launcher");
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
