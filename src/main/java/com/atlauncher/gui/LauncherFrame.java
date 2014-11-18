@@ -75,8 +75,8 @@ implements RelocalizationListener{
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
 
-        this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
+        this.add(tabbedPane, BorderLayout.NORTH);
 
         if (show) {
             LogManager.info("Showing Launcher");
@@ -101,7 +101,7 @@ implements RelocalizationListener{
      * Setup the individual tabs used in the Launcher sidebar
      */
     private void setupTabs() {
-        tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
+        tabbedPane = new JTabbedPane( JTabbedPane.TOP);
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
         newsTab = new NewsTab();
