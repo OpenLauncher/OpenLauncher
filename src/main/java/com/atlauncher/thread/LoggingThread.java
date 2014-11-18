@@ -19,6 +19,7 @@
 package com.atlauncher.thread;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
@@ -37,7 +38,7 @@ public final class LoggingThread extends Thread {
         this.setName("ATL-Logging-Thread");
         try {
             this.writer = new LogEventWriter(new FileWriter(new File(App.settings.getBaseDir(),
-                    "ATLauncher-Log-1.txt")));
+                    Constants.launcherName +"-Log-1.txt")));
             this.writer.write("Generated on " + Timestamper.now() + "\n");
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override

@@ -24,7 +24,6 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'launch4j'
 apply plugin: 'macAppBundle'
 
 ext.configFile = file 'build.properties'
@@ -92,20 +91,9 @@ assemble.dependsOn.remove(createDmg)
 build.dependsOn.remove(createDmg)
 createApp.dependsOn.remove(copyToResourcesJava)
 build.dependsOn(createAppZip)
-build.dependsOn(tasks.launch4j)
 createApp.dependsOn(copyMainJar)
 copyMainJar.dependsOn(shadowJar)
 build.finalizedBy(copyToOutput)
-
-afterEvaluate {
-    launch4j {
-        icon = file("src/main/resources/assets/image/Icon.ico").getCanonicalPath()
-        jreMinVersion = '1.6.0'
-        jar = project.tasks.jar.getArchivePath().getPath()
-        outfile = project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe")
-        mainClassName = config.mainClass
-    }
-}
 
 artifacts {
     archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe"))

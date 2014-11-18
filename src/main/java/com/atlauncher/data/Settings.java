@@ -630,11 +630,11 @@ public class Settings {
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
                                 "page" +
-                                ".<br/><br/>Download " + "the update and replace the old" + Constants.launcherName + "file" +
+                                ".<br/><br/>Download " + "the update and replace the old " + Constants.launcherName + " file" +
                                 ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
-                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                    Utils.openBrowser("http://rushmead.playat.ch/" + Constants.launcherName +".jar");
                     System.exit(0);
                 }
             }
