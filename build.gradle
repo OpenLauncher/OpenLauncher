@@ -38,7 +38,7 @@ configFile.withReader {
 mainClassName = config.mainClass
 version = "${config.version.reserved}.${config.version.major}.${config.version.minor}.${config.version.revision}"
 group = 'com.atlauncher'
-archivesBaseName = 'UntitledLauncher'
+archivesBaseName = 'OpenLauncher'
 sourceCompatibility = '1.6' // tergetCompatibility set by this automatically
 
 repositories {
