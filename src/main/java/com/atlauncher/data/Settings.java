@@ -1410,12 +1410,22 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
-            this.news = gson.fromJson(new FileReader(new File(getJSONDir(), "news.json")), type);
+            File fileDir = new File(getJSONDir(), "news.json");
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                new FileInputStream(fileDir), "UTF-8"));
+            
+            this.news = gson.fromJson(in, type);
+            in.close();
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
             logStackTrace(e);
         } catch (FileNotFoundException e) {
+            logStackTrace(e);
+        } catch (UnsupportedEncodingException e) {
+            logStackTrace(e);
+        } catch (IOException e) {
             logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
