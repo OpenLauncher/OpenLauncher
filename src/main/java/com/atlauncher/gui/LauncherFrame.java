@@ -75,7 +75,7 @@ implements RelocalizationListener{
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
 
-        this.add(bottomBar, BorderLayout.SOUTH);
+       // this.add(bottomBar, BorderLayout.SOUTH);
         this.add(tabbedPane, BorderLayout.NORTH);
 
         if (show) {
