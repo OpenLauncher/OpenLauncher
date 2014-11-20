@@ -1,14 +1,10 @@
-UntitledLauncher
+OpenLauncher
 ====================================
 
 ### What is it?
-UntitledLauncher is a fork of the ATLauncher. There will be more info to come soon!
+OpenLauncher is a fork of the ATLauncher. There will be more info to come soon!
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
-
-
-
-
 
 ### Coding Standards
 
@@ -18,7 +14,6 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 + Please don't use star imports
 + Please mark all classes that are to be de/serialized with Gson with the @Json annotation for other developers
 + Please use the IntelliJ-Coding-Style.xml for the project (if using IntelliJ) in order to keep all formatting consistent
-
 
 ## Versioning System
 
