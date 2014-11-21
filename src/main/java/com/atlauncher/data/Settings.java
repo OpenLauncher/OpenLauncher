@@ -195,7 +195,9 @@ public class Settings {
     }
 
     public void loadEverything() {
-        this.server = Constants.SERVERS[0];
+        setupServers(); // Setup the servers available to use in the Launcher
+        checkCreeperRepoEdges();
+        loadServerProperty(false); // Get users Server preference
 
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server

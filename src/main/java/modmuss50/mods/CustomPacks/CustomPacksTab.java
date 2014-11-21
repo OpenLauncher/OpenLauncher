@@ -50,20 +50,20 @@ public class CustomPacksTab extends JPanel implements Tab {
         selectedrepo = 0;
 
         topPanel = new JPanel();
-//        topPanel.add(loadModsFromCode);
-//        topPanel.add(selectmods);
-//        topPanel.add(ammoutOfMods);
-        topPanel.add(commingSoon);
+        topPanel.add(loadModsFromCode);
+        topPanel.add(selectmods);
+        topPanel.add(ammoutOfMods);
+//        topPanel.add(commingSoon);
         add(topPanel, BorderLayout.NORTH);
 
         middlePanel = new JPanel();
-//        middlePanel.add(minecraftVersion);
-//        middlePanel.add(forgeVersion);
+        middlePanel.add(minecraftVersion);
+        middlePanel.add(forgeVersion);
         add(middlePanel, BorderLayout.CENTER);
 
         bottomPanel = new JPanel();
-//        bottomPanel.add(make);
-//        bottomPanel.add(install);
+        bottomPanel.add(make);
+        bottomPanel.add(install);
 
         add(bottomPanel, BorderLayout.SOUTH);
         make.addActionListener(new ActionListener() {

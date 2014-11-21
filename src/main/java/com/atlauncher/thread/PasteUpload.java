@@ -36,7 +36,7 @@ public final class PasteUpload implements Callable<String> {
         String urlParameters = "";
         urlParameters += "title=" + URLEncoder.encode(Constants.launcherName + " - Log", "ISO-8859-1") + "&";
         urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
-        urlParameters += "private=" + URLEncoder.encode("0", "ISO-8859-1") + "&";
+        urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
         urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1") + "&";
         if(App.settings.getAccount() != null){
             urlParameters += "name=" + URLEncoder.encode(App.settings.getAccount().getMinecraftUsername(), "ISO-8859-1");
