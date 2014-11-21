@@ -17,7 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.BlankToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
@@ -46,7 +45,6 @@ public class ToolsTab extends JPanel implements Tab {
         mainPanel.add(new BlankToolPanel());
 
         add(mainPanel, BorderLayout.CENTER);
-        add(App.settings.getBottomBar(), BorderLayout.SOUTH);
     }
 
     @Override

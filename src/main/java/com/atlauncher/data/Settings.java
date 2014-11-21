@@ -2131,12 +2131,6 @@ public class Settings {
     }
 
     /**
-     * Gets the bottom bar
-     */
-    public LauncherBottomBar getBottomBar( ) {
-        return this.bottomBar;
-    }
-    /**
      * Reloads the bottom bar accounts combobox
      */
     public void reloadAccounts() {
