@@ -566,25 +566,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-
         if (!files.isEmpty()) {
-<<<<<<< HEAD
-            String base64Files = Base64.encodeBytes(files.getBytes());
-
-            fileSizes = new HashMap<String, Integer>();
-            String returnValue = null;
-//            try {
-//                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
-//                        "files");
-//            } catch (IOException e1) {
-//                App.settings.logStackTrace(e1);
-//            }
-            if (returnValue == null) {
-                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
-            }
-
-            if (returnValue != null) {
-=======
             APIResponse response = null;
             try {
                 response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
@@ -594,7 +576,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (response == null) {
                 LogManager.warn("Couldn't get info of files. Continuing regardless!");
             } else {
->>>>>>> master
                 try {
                     java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
                     }.getType();

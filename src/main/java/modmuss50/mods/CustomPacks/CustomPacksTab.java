@@ -26,6 +26,7 @@ public class CustomPacksTab extends JPanel implements Tab {
     JLabel ammoutOfMods = new JLabel("Amout of mods in pack: " + modsToUse.size());
     JLabel minecraftVersion = new JLabel("Minecraft version: NONE");
     JLabel forgeVersion = new JLabel("Minecraft forge version: NONE");
+    JComboBox<String> repoVersion = new JComboBox<String>();
     JLabel commingSoon = new JLabel("This is coming soon! Hang tight!");
     private JPanel bottomPanel;
     private JPanel topPanel;
@@ -40,8 +41,12 @@ public class CustomPacksTab extends JPanel implements Tab {
             e.printStackTrace();
         }
 
+        for(IRepo repo : ModSanner.repoVersions){
+            repoVersion.addItem(repo.version());
+        }
+
         try {
-            ModSanner.loadCustomMods(getCurrentRepo().version());
+            ModSanner.loadCustomMods(repoVersion.getSelectedItem().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,6 +55,7 @@ public class CustomPacksTab extends JPanel implements Tab {
         selectedrepo = 0;
 
         topPanel = new JPanel();
+        topPanel.add(repoVersion);
         topPanel.add(loadModsFromCode);
         topPanel.add(selectmods);
         topPanel.add(ammoutOfMods);
@@ -127,7 +133,7 @@ public class CustomPacksTab extends JPanel implements Tab {
                 String repoVersion = split[1];
                 if(repoVersion != getCurrentRepo().version()){
                     //TODO add a way to change the repo version form inside the launcher
-                    JOptionPane.showMessageDialog(null, "This mod pack was made with an old repo version. Please update the pack to the new version!");
+                    JOptionPane.showMessageDialog(null, "This mod pack was made with an old repo version. Please update the pack to the new version or change the repo version");
                     return;
                 }
                 for (int i = 2; i < split.length; i++) {
@@ -145,6 +151,16 @@ public class CustomPacksTab extends JPanel implements Tab {
         selectmods.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 new SelectMods();
+            }
+        });
+
+        repoVersion.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ModSanner.loadCustomMods(repoVersion.getSelectedItem().toString());
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
