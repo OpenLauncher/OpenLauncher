@@ -138,7 +138,7 @@ public class CustomPacksTab extends JPanel implements Tab {
                 }
                 for (int i = 2; i < split.length; i++) {
                     for (IMod scannermod : ModSanner.customMods) {
-                        if (Integer.parseInt(split[i]) == scannermod.id()) {
+                        if (split[i] == scannermod.id()) {
                             modsToUse.add(scannermod);
                         }
                     }

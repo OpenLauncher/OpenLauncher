@@ -24,7 +24,7 @@ public class ModSanner {
             JSONObject jsonObject = (JSONObject) o;
 
             final String name = (String) jsonObject.get("name");
-            final Long id = (Long) jsonObject.get("id");
+            final String id = (String) jsonObject.get("id");
             final String fileName = (String) jsonObject.get("fileName");
             final String version = (String) jsonObject.get("version");
             IMod iMod = new IMod() {
@@ -34,8 +34,8 @@ public class ModSanner {
                 }
 
                 @Override
-                public int id() {
-                    return id.intValue();
+                public String id() {
+                    return id;
                 }
 
                 @Override
