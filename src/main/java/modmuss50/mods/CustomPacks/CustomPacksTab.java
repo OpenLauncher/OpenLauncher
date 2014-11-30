@@ -1,15 +1,24 @@
 package modmuss50.mods.CustomPacks;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.thread.PasteUpload;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -124,19 +133,34 @@ public class CustomPacksTab extends JPanel implements Tab {
                 JFrame frame = new JFrame();
                 Object result = JOptionPane.showInputDialog(frame, "Enter Pack code:");
                 String text = (String) result;
-                if (text.length() == 0) {
+                if (text == null || text.length() == 0) {
                     JOptionPane.showMessageDialog(null, "Please enter a pack code!");
                     return;
                 }
+
+                try {
+                    text = getText("http://rushmead.playat.ch/stikket/view/raw/" + text);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    return;
+                }
+
+                System.out.println(text);
+
                 String[] split = text.split(":");
                 String forgeverson = split[0];
                 String repoVersion = split[1];
-                if(repoVersion != getCurrentRepo().version()){
-                    //TODO add a way to change the repo version form inside the launcher
+                System.out.println(repoVersion);
+                if(!repoVersion.equals(getCurrentRepo().version())){
                     JOptionPane.showMessageDialog(null, "This mod pack was made with an old repo version. Please update the pack to the new version or change the repo version");
                     return;
                 }
                 for (int i = 2; i < split.length; i++) {
+                    try {
+                        ModSanner.loadCustomMods(getCurrentRepo().version());
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                     for (IMod scannermod : ModSanner.customMods) {
                         if (split[i] == scannermod.id()) {
                             modsToUse.add(scannermod);
@@ -182,20 +206,58 @@ public class CustomPacksTab extends JPanel implements Tab {
 
     public String getPackCode() {
         String code = "";
-        //This is the forge version
-        code = code + getCurrentRepo().minecraftVersion() + "-" + getCurrentRepo().forgeVersion() + ":";
-        //this is the repoversion
-        code = code + getCurrentRepo().version() + ":";
+        code = code + getCurrentRepo().forgeVersion() + ":" + getCurrentRepo().version() + ":";
         for (int i = 0; i < modsToUse.size(); i++) {
             IMod mod = modsToUse.get(i);
             code = code + mod.id() + ":";
         }
         code = code.substring(0, code.length() - 1);
-        return code;
+
+        String url  = "error";
+
+        try {
+            UploadPackCode.code = code;
+            String result = App.TASKPOOL.submit(new UploadPackCode()).get();
+            if (result.contains(Constants.PASTE_CHECK_URL)) {
+                result = result.replace("http://rushmead.playat.ch/stikket/view/", "");
+                App.TOASTER.pop("Code uploaded and link copied to clipboard");
+                LogManager.info("Code uploaded and link copied to clipboard: " + result);
+                StringSelection text = new StringSelection(result);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(text, null);
+                url = result;
+            } else {
+                App.TOASTER.popError("Code failed to upload!");
+                LogManager.error("Code failed to upload: " + result);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+
+        return url;
     }
 
     public IRepo getCurrentRepo() {
         return ModSanner.repoVersions.get(selectedrepo);
+    }
+
+    public static String getText(String url) throws Exception {
+        URL website = new URL(url);
+        URLConnection connection = website.openConnection();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                        connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null)
+            response.append(inputLine);
+
+        in.close();
+
+        return response.toString();
     }
 
 }
