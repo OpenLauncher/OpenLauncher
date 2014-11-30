@@ -1389,13 +1389,16 @@ public class Settings {
     }
 
     public void clearTriedServers() {
-        this.triedServers = new ArrayList<Server>(); // Clear the list
+        if (this.triedServers.size() != 0) {
+            this.triedServers = new ArrayList<Server>(); // Clear the list
+            this.server = this.originalServer;
+        }
     }
 
     public boolean getNextServer() {
         this.triedServers.add(this.server);
         for (Server server : this.servers) {
-            if (!this.triedServers.contains(server) && !server.isDisabled() && server.isUserSelectable()) {
+            if (!this.triedServers.contains(server) && !server.isDisabled()) {
                 LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
                 this.server = server; // Setup next available server
                 return true;
@@ -1413,10 +1416,8 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
             File fileDir = new File(getJSONDir(), "news.json");
-            BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                new FileInputStream(fileDir), "UTF-8"));
-            
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
+
             this.news = gson.fromJson(in, type);
             in.close();
         } catch (JsonSyntaxException e) {
@@ -2771,7 +2772,7 @@ public class Settings {
     }
 
     public File getThemeFile() {
-        File theme = new File(this.themesDir, this.theme + ".json");
+        File theme = new File(this.themesDir, this.theme + ".zip");
         if (theme.exists()) {
             return theme;
         } else {

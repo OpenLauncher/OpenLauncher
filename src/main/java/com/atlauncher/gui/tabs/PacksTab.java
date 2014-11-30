@@ -126,8 +126,7 @@ public final class PacksTab extends JPanel implements Tab {
         });
 
         this.searchField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyPressed(KeyEvent e){
                 reload();
             }
         });

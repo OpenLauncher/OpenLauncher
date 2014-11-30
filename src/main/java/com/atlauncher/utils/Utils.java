@@ -61,6 +61,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.io.Reader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -182,6 +183,34 @@ public class Utils {
 
             if (!name.endsWith(".png")) {
                 name = name + ".png";
+            }
+
+            File themeFile = App.settings.getThemeFile();
+
+            if(themeFile != null) {
+                InputStream stream = null;
+
+                ZipFile zipFile = new ZipFile(themeFile);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
+                        stream = zipFile.getInputStream(entry);
+                        break;
+                    }
+                }
+
+                if (stream != null) {
+                    BufferedImage image = ImageIO.read(stream);
+
+                    stream.close();
+                    zipFile.close();
+
+                    return image;
+                }
+
+                zipFile.close();
             }
 
             InputStream stream = App.class.getResourceAsStream(name);
@@ -1618,7 +1647,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                return file.exists() && file.isFile() && name.endsWith(".json");
+                return file.exists() && file.isFile() && name.endsWith(".zip");
             }
         };
     }

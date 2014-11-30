@@ -15,34 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.mojang.api;
+package com.atlauncher.data.json;
 
-import com.atlauncher.App;
 import com.atlauncher.annot.Json;
 
-import java.io.IOException;
-import java.util.List;
-
 @Json
-public class MinecraftProfileResponse {
-    private String id;
-    private String name;
-    private List<UserPropertyRaw> properties;
+public class ModInfo {
+    private int filesize;
+    private String md5;
 
-    public boolean hasProperties() {
-        return this.properties != null;
+    public int getFilesize() {
+        return filesize;
     }
 
-    public UserProperty getUserProperty(String name) {
-        for (UserPropertyRaw property : this.properties) {
-            if (property.getName().equals(name)) {
-                try {
-                    return property.parse();
-                } catch (IOException e) {
-                    App.settings.logStackTrace("Error parsing user property " + name + " for username " + name, e);
-                }
-            }
-        }
-        return null;
+    public String getMd5() {
+        return md5;
     }
 }

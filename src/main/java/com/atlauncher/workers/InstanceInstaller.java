@@ -18,12 +18,15 @@
 package com.atlauncher.workers;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Action;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Mod;
@@ -33,6 +36,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ModInfo;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
@@ -51,6 +55,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -126,8 +131,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private List<Action> actions;
     private List<String> forgeLibraries = new ArrayList<String>();
 
-    public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall,
-                             boolean isServer) {
+    public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean
+            isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -552,18 +557,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private ArrayList<Downloadable> getDownloadableMods() {
         ArrayList<Downloadable> mods = new ArrayList<Downloadable>();
-
-        String files = "";
+        List<String> files = new ArrayList<String>();
+        Map<String, ModInfo> fileSizes = new HashMap<String, ModInfo>();
 
         for (Mod mod : this.selectedMods) {
             if (mod.isServerDownload()) {
-                files = files + mod.getURL() + "|||";
+                files.add(mod.getURL());
             }
         }
 
-        HashMap<String, Integer> fileSizes = null;
 
         if (!files.isEmpty()) {
+<<<<<<< HEAD
             String base64Files = Base64.encodeBytes(files.getBytes());
 
             fileSizes = new HashMap<String, Integer>();
@@ -579,28 +584,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             if (returnValue != null) {
+=======
+            APIResponse response = null;
+            try {
+                response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
+            } catch (IOException e1) {
+                App.settings.logStackTrace(e1);
+            }
+            if (response == null) {
+                LogManager.warn("Couldn't get info of files. Continuing regardless!");
+            } else {
+>>>>>>> master
                 try {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputSource is = new InputSource(new StringReader(returnValue));
-                    Document document = builder.parse(is);
-                    document.getDocumentElement().normalize();
-                    NodeList nodeList = document.getElementsByTagName("file");
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        Node node = nodeList.item(i);
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {
-                            Element element = (Element) node;
-                            String url = element.getAttribute("url");
-                            int size = Integer.parseInt(element.getAttribute("size"));
-                            fileSizes.put(url, size);
-                        }
-                    }
-                } catch (SAXException e) {
-                    App.settings.logStackTrace(e);
-                } catch (ParserConfigurationException e) {
-                    App.settings.logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
+                    java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
+                    }.getType();
+                    fileSizes = Gsons.DEFAULT.fromJson(response.getDataAsString(), type);
+                } catch (Exception e) {
+                    App.settings.logStackTrace("Failed to get response from the API, this won't affect the install "
+                            + "process!", e);
                 }
             }
         }
@@ -609,16 +610,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.isServerDownload()) {
                 Downloadable downloadable;
                 int size = -1;
-                if (fileSizes.containsKey(mod.getURL())) {
-                    size = fileSizes.get(mod.getURL());
-                }
+                String md5 = null;
+
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), mod.getMD5(), size, this, true);
-                } else {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), null, size, this, true);
+                    md5 = mod.getMD5();
                 }
+
+                if (fileSizes.containsKey(mod.getURL())) {
+                    size = fileSizes.get(mod.getURL()).getFilesize();
+                    md5 = fileSizes.get(mod.getURL()).getMd5();
+                }
+
+                downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod.getFile())
+                        , md5, size, this, true);
+
                 mods.add(downloadable);
             }
         }
@@ -628,55 +633,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private List<Downloadable> getDownloadableJsonMods() {
         List<Downloadable> mods = new ArrayList<Downloadable>();
-
-        String files = "";
+        List<String> files = new ArrayList<String>();
+        Map<String, ModInfo> fileSizes = new HashMap<String, ModInfo>();
 
         for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
             if (mod.getDownload() == DownloadType.server) {
-                files = files + mod.getUrl() + "|||";
+                files.add(mod.getUrl());
             }
         }
 
-        Map<String, Integer> fileSizes = null;
-
         if (!files.isEmpty()) {
-            String base64Files = Base64.encodeBytes(files.getBytes());
-
-            fileSizes = new HashMap<String, Integer>();
-            String returnValue = null;
+            APIResponse response = null;
             try {
-                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
-                        "files");
+                response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
             } catch (IOException e1) {
                 App.settings.logStackTrace(e1);
             }
-            if (returnValue == null) {
-                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
-            }
-
-            if (returnValue != null) {
+            if (response == null) {
+                LogManager.warn("Couldn't get info of files. Continuing regardless!");
+            } else {
                 try {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputSource is = new InputSource(new StringReader(returnValue));
-                    Document document = builder.parse(is);
-                    document.getDocumentElement().normalize();
-                    NodeList nodeList = document.getElementsByTagName("file");
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        Node node = nodeList.item(i);
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {
-                            Element element = (Element) node;
-                            String url = element.getAttribute("url");
-                            int size = Integer.parseInt(element.getAttribute("size"));
-                            fileSizes.put(url, size);
-                        }
-                    }
-                } catch (SAXException e) {
-                    App.settings.logStackTrace(e);
-                } catch (ParserConfigurationException e) {
-                    App.settings.logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
+                    java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
+                    }.getType();
+                    fileSizes = Gsons.DEFAULT.fromJson(response.getDataAsString(), type);
+                } catch (Exception e) {
+                    App.settings.logStackTrace("Failed to get response from the API, this won't affect the install "
+                            + "process!", e);
                 }
             }
         }
@@ -685,16 +667,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.getDownload() == DownloadType.server) {
                 Downloadable downloadable;
                 int size = -1;
-                if (fileSizes.containsKey(mod.getUrl())) {
-                    size = fileSizes.get(mod.getUrl());
-                }
+                String md5 = null;
+
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), mod.getMD5(), size, this, true);
-                } else {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), null, size, this, true);
+                    md5 = mod.getMD5();
                 }
+
+                if (fileSizes.containsKey(mod.getUrl())) {
+                    size = fileSizes.get(mod.getUrl()).getFilesize();
+                    md5 = fileSizes.get(mod.getUrl()).getMd5();
+                }
+
+                downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod.getFile())
+                        , md5, size, this, true);
+
                 mods.add(downloadable);
             }
         }
@@ -1058,8 +1044,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
-                        .getName() : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
+                        () : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1113,8 +1099,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (com.atlauncher.data.json.Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
-                        .getName() : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
+                        () : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1140,8 +1126,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0,
-                            library.getFile().getName().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
+                            ().lastIndexOf("-")))) {
                         continue;
                     }
                     if (library.getFile().exists()) {
@@ -1203,9 +1189,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
                         .getName().endsWith("litemod"))) {
                     if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
-                        file.renameTo(new File(file.getParentFile(), file.getName().substring(0,
-                                file.getName().lastIndexOf(".")).toUpperCase() + file.getName().substring(file
-                                .getName().lastIndexOf("."), file.getName().length())));
+                        file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
+                                .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
+                                .lastIndexOf("."), file.getName().length())));
                     } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                         file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                     }
@@ -1217,9 +1203,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         .getName().endsWith("litemod"))) {
                     if (this.caseAllFiles != null) {
                         if (this.caseAllFiles.equalsIgnoreCase("upper")) {
-                            file.renameTo(new File(file.getParentFile(), file.getName().substring(0,
-                                    file.getName().lastIndexOf(".")).toUpperCase() + file.getName().substring(file
-                                    .getName().lastIndexOf("."), file.getName().length())));
+                            file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
+                                    .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
+                                    .lastIndexOf("."), file.getName().length())));
                         } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
                             file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                         }
@@ -1255,8 +1241,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 File file = new File(objectsFolder, filename);
                 File virtualFile = new File(virtualRoot, entry.getKey());
                 if (object.needToDownload(file)) {
-                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file,
-                            object.getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
+                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file, object
+                            .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
                 } else {
                     if (index.isVirtual()) {
                         virtualFile.mkdirs();
@@ -1297,6 +1283,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         Download download = Download.direct;
                         if (element.hasAttribute("download")) {
                             download = Download.valueOf(element.getAttribute("download"));
+                        } else {
+                            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                download = Download.server;
+                            }
                         }
                         String md5 = "-";
                         if (element.hasAttribute("md5")) {
@@ -1336,15 +1326,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             if (!element.hasAttribute("server")) {
                                 continue;
                             }
-                            serverLibraries.add(new File(new File(getLibrariesDirectory(),
-                                    element.getAttribute("server").substring(0,
-                                            element.getAttribute("server").lastIndexOf('/'))),
+                            serverLibraries.add(new File(new File(getLibrariesDirectory(), element.getAttribute
+                                    ("server").substring(0, element.getAttribute("server").lastIndexOf('/'))),
                                     element.getAttribute("server").substring(element.getAttribute("server")
                                             .lastIndexOf('/'), element.getAttribute("server").length())));
                         }
                         downloadTo = new File(App.settings.getLibrariesDir(), file);
                         if (download == Download.server) {
-                            libraries.add(new Downloadable(App.settings.getFileURL(url), downloadTo, md5, this, false));
+                            libraries.add(new Downloadable(url, downloadTo, md5, this, true));
                         } else {
                             libraries.add(new Downloadable(url, downloadTo, md5, this, false));
                         }
@@ -1383,6 +1372,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         continue;
                     }
                 }
+
+                if (!library.getUrl().startsWith("http://") && !library.getUrl().startsWith("https://")) {
+                    library.setDownloadType(DownloadType.server);
+                }
+
                 if (librariesNeeded == null) {
                     this.librariesNeeded = library.getFile();
                 } else {
@@ -1398,8 +1392,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
                 downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
                 if (library.getDownloadType() == DownloadType.server) {
-                    libraries.add(new Downloadable(App.settings.getFileURL(library.getUrl()), downloadTo,
-                            library.getMD5(), this, false));
+                    libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, true));
                 } else if (library.getDownloadType() == DownloadType.direct) {
                     libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, false));
                 } else {
@@ -1419,8 +1412,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!this.isServer) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0,
-                            library.getFile().getName().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
+                            ().lastIndexOf("-")))) {
                         LogManager.debug("Not adding library " + library.getName() + " as it's been overwritten " +
                                 "already by the packs libraries!");
                         continue;
@@ -1835,9 +1828,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                    Type.valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()),
-                    mod.getDescription(), false, false));
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, Type
+                    .valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
+                    .getDescription(), false, false));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version
@@ -1959,8 +1952,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"),
-                        Language.INSTANCE.localize("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" + "" +
+                        ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getUpdateMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1972,9 +1965,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         }
                     }
                 });
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        Language.INSTANCE.localize("common.reinstalling") + " " + this.pack.getName(),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize
+                        ("common.reinstalling") + " " + this.pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
@@ -1986,8 +1979,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"),
-                        Language.INSTANCE.localize("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" + "" +
+                        ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getInstallMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1999,9 +1992,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         }
                     }
                 });
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        Language.INSTANCE.localize("common.installing") + " " + this.pack.getName(),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize
+                        ("common.installing") + " " + this.pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
@@ -2039,8 +2032,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             ("" + "."));
                 }
             }
-            modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                    mod.getType(), mod.getColour(), mod.getDescription(), false, false));
+            modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod.getType
+                    (), mod.getColour(), mod.getDescription(), false, false));
         }
         if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion()
         ) && instance.hasCustomMods()) {
@@ -2140,10 +2133,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         restoreSelectFiles();
         if (isServer) {
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
-                    new File(getRootDirectory(), "LaunchServer.bat"), "%%SERVERJAR%%", getServerJar());
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"),
-                    new File(getRootDirectory(), "LaunchServer.sh"), "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), new File(getRootDirectory
+                    (), "LaunchServer.bat"), "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), new File(getRootDirectory
+                    (), "LaunchServer.sh"), "%%SERVERJAR%%", getServerJar());
         }
         return true;
     }
@@ -2371,6 +2364,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void addDownloadedBytes(int bytes) {
         this.downloadedBytes += bytes;
+        this.updateProgressBar();
+    }
+
+    public void addTotalDownloadedBytes(int bytes) {
+        this.totalBytes += bytes;
+        this.updateProgressBar();
+    }
+
+    private void updateProgressBar() {
         float progress;
         if (this.totalBytes > 0) {
             progress = ((float) this.downloadedBytes / (float) this.totalBytes) * 100;

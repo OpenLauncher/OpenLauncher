@@ -16,3 +16,4 @@
 !/gradlew*
 !/build.gradle
 !/build.properties
+!/CHANGELOG.md
