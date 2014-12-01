@@ -256,6 +256,7 @@ public class App {
 
     private static void setLAF() throws Exception {
         WebLookAndFeel.install();
+        WebLookAndFeel.setDecorateAllWindows(true);
     }
 
     private static void modifyLAF() throws Exception {
