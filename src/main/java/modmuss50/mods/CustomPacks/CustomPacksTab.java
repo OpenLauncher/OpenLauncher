@@ -7,7 +7,6 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.thread.PasteUpload;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,9 +20,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-/**
- * Created by Mark on 30/10/2014.
- */
 public class CustomPacksTab extends JPanel implements Tab {
 
     public static ArrayList<IMod> modsToUse = new ArrayList<IMod>();
@@ -118,8 +114,6 @@ public class CustomPacksTab extends JPanel implements Tab {
                                         + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else if (packi != null) {
-                        InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(packi);
-                        //TODO Change the repo version here when this is ready to added
                         new InstanceInstallerDialog(packi, getCurrentRepo().version() + " (Minecraft" + getCurrentRepo().minecraftVersion() + ")");
                     }
                 }
@@ -137,16 +131,12 @@ public class CustomPacksTab extends JPanel implements Tab {
                     JOptionPane.showMessageDialog(null, "Please enter a pack code!");
                     return;
                 }
-
                 try {
-                    text = getText("http://rushmead.playat.ch/stikket/view/raw/" + text);
+                    text = getText(Constants.API_BASE_URL + "view/raw/" + text);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     return;
                 }
-
-                System.out.println(text);
-
                 String[] split = text.split(":");
                 String forgeverson = split[0];
                 String repoVersion = split[1];
@@ -162,7 +152,7 @@ public class CustomPacksTab extends JPanel implements Tab {
                         e1.printStackTrace();
                     }
                     for (IMod scannermod : ModSanner.customMods) {
-                        if (split[i] == scannermod.id()) {
+                        if (split[i].equals(scannermod.id())) {
                             modsToUse.add(scannermod);
                         }
                     }
@@ -219,7 +209,7 @@ public class CustomPacksTab extends JPanel implements Tab {
             UploadPackCode.code = code;
             String result = App.TASKPOOL.submit(new UploadPackCode()).get();
             if (result.contains(Constants.PASTE_CHECK_URL)) {
-                result = result.replace("http://rushmead.playat.ch/stikket/view/", "");
+                result = result.replace(Constants.API_BASE_URL + "view/", "");
                 App.TOASTER.pop("Code uploaded and link copied to clipboard");
                 LogManager.info("Code uploaded and link copied to clipboard: " + result);
                 StringSelection text = new StringSelection(result);

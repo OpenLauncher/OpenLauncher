@@ -28,16 +28,8 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -51,10 +43,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
     private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
-    private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
     private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
     private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
+    private final JLabel packName = new JLabel();
     private final JSplitPane splitter = new JSplitPane();
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
@@ -69,9 +61,12 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.splitter.setEnabled(false);
 
         JPanel abPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        packName.setText(pack.getName());
+        Font boldFont = new Font(packName.getFont().getFontName(), Font.BOLD, packName.getFont().getSize());
+        packName.setFont(boldFont);
+        abPanel.add(packName);
         abPanel.add(this.newInstanceButton);
         abPanel.add(this.createServerButton);
-        abPanel.add(this.supportButton);
         abPanel.add(this.websiteButton);
         abPanel.add(this.modsButton);
 
@@ -144,12 +139,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 }
             }
         });
-        this.supportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getSupportURL());
-            }
-        });
         this.websiteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,7 +158,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     public void onRelocalization() {
         this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
-        this.supportButton.setText(Language.INSTANCE.localize("common.support"));
         this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
         this.modsButton.setText(Language.INSTANCE.localize("pack.viewmods"));
     }

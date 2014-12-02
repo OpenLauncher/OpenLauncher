@@ -47,11 +47,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -84,6 +81,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
     private final JButton editButton = new JButton(Language.INSTANCE.localize("common.editmods"));
     private final JButton openButton = new JButton(Language.INSTANCE.localize("common.openfolder"));
+    private final JLabel packName = new JLabel();
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -107,11 +105,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        packName.setText(instance.getName());
+        Font boldFont = new Font(packName.getFont().getFontName(), Font.BOLD, packName.getFont().getSize());
+        packName.setFont(boldFont);
+        top.add(packName);
         top.add(this.playButton);
         top.add(this.reinstallButton);
         top.add(this.updateButton);
         top.add(this.renameButton);
-        top.add(this.backupButton);
+        bottom.add(this.backupButton);
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
         bottom.add(this.editButton);

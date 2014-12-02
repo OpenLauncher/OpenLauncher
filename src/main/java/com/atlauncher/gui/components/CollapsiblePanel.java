@@ -118,11 +118,6 @@ public class CollapsiblePanel extends JPanel {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
-                setCollapsed(true);
-            }
-        }
     }
 
     /**
@@ -142,6 +137,7 @@ public class CollapsiblePanel extends JPanel {
         JLabel label = new JLabel(text);
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
+        panel.setSize(new Dimension(100, 500));
         add(label, BorderLayout.CENTER);
         add(titleComponent, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
@@ -157,7 +153,7 @@ public class CollapsiblePanel extends JPanel {
         setLayout(new BorderLayout());
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        add(titleComponent, BorderLayout.CENTER);
+        //add(titleComponent, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
         setCollapsed(collapsed);
         placeTitleComponent();
@@ -191,6 +187,7 @@ public class CollapsiblePanel extends JPanel {
      * @param collapse When set to true, the panel is collapsed, else it is expanded
      */
     public void setCollapsed(boolean collapse) {
+        collapse = false;
         if (collapse) {
             // collapse the panel, remove content and set border to empty border
             remove(panel);
