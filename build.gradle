@@ -44,12 +44,21 @@ repositories {
     mavenCentral()
 }
 
+def grabDep(name, url){
+    ant.get(src: url, dest: 'dep')
+    file("dep/" + url.substring(url.lastIndexOf("/"))).renameTo(file("dep/" + name + ".jar"))
+}
+
+
 dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'org.tukaani:xz:1.5'
 
     testCompile 'junit:junit:4.11'
+
+    grabDep('weblaf', 'http://weblookandfeel.com/downloads/gpl/weblaf-complete-1.28.jar')
+    compile files("dep/weblaf.jar")
 }
 
 jar {
