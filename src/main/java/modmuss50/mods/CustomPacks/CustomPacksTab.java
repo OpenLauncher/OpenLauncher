@@ -7,6 +7,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.gui.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,15 +61,19 @@ public class CustomPacksTab extends JPanel implements Tab {
         selectedrepo = 0;
 
         topPanel = new JPanel();
+        repoVersion.setFont(Theme.DEFAULT_THEME.getDefaultFont().deriveFont(10F));
         topPanel.add(repoVersion);
         topPanel.add(loadModsFromCode);
         topPanel.add(selectmods);
+        ammoutOfMods.setFont(Theme.DEFAULT_THEME.getDefaultFont().deriveFont(15F));
         topPanel.add(ammoutOfMods);
 //        topPanel.add(commingSoon);
         add(topPanel, BorderLayout.NORTH);
 
         middlePanel = new JPanel();
+        minecraftVersion.setFont(Theme.DEFAULT_THEME.getDefaultFont().deriveFont(15F));
         middlePanel.add(minecraftVersion);
+        forgeVersion.setFont(Theme.DEFAULT_THEME.getDefaultFont().deriveFont(15F));
         middlePanel.add(forgeVersion);
         add(middlePanel, BorderLayout.CENTER);
 
@@ -183,11 +188,11 @@ public class CustomPacksTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return "Custom Packs";
+        return "Custom Pack";
     }
 
     public void refresh() {
-        ammoutOfMods.setText("Amout of mods in pack: " + modsToUse.size());
+        ammoutOfMods.setText("Amount of mods in pack: " + modsToUse.size());
         repaint();
         topPanel.repaint();
         minecraftVersion.setText("Minecraft version:" + getCurrentRepo().minecraftVersion());

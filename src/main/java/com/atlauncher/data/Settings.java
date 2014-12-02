@@ -139,7 +139,7 @@ public class Settings {
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab packsPanel; // The packs panel
-    private LauncherBottomBar bottomBar; // The bottom bar
+    public LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
@@ -1251,7 +1251,7 @@ public class Settings {
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
-            properties.setProperty("theme", this.theme);
+            //properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());

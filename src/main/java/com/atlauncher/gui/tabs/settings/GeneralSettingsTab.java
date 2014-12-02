@@ -22,13 +22,9 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Utils;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -75,34 +71,34 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         // Theme
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-
-        themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
-                ".requiresrestart"), RESTART_BORDER);
-
-        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.themehelp"));
-
-        themeLabelPanel = new JPanel();
-        themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        themeLabelPanel.add(themeLabelRestart);
-        themeLabelPanel.add(themeLabel);
-
-        add(themeLabelPanel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        theme = new JComboBox<String>();
-        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
-            theme.addItem(themee.replace(".zip", ""));
-        }
-        theme.setSelectedItem(App.settings.getTheme());
-
-        add(theme, gbc);
+//        gbc.gridx = 0;
+//        gbc.gridy++;
+//        gbc.insets = LABEL_INSETS;
+//        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+//
+//        themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
+//                ".requiresrestart"), RESTART_BORDER);
+//
+//        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
+//                Language.INSTANCE.localize("settings.themehelp"));
+//
+//        themeLabelPanel = new JPanel();
+//        themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+//        themeLabelPanel.add(themeLabelRestart);
+//        themeLabelPanel.add(themeLabel);
+//
+//        add(themeLabelPanel, gbc);
+//
+//        gbc.gridx++;
+//        gbc.insets = FIELD_INSETS;
+//        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+//        theme = new JComboBox<String>();
+//        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
+//            theme.addItem(themee.replace(".zip", ""));
+//        }
+//        theme.setSelectedItem(App.settings.getTheme());
+//
+//        add(theme, gbc);
 
         // Date Format
 
@@ -241,6 +237,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public boolean needToReloadTheme() {
+        if(theme.getSelectedItem() == null)
+            return false;
         return !((String) theme.getSelectedItem()).equalsIgnoreCase(App.settings.getTheme());
     }
 

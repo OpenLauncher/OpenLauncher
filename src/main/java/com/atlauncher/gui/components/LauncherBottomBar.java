@@ -64,7 +64,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
-    private JComboBox<Account> username;
+    public JComboBox<Account> username;
 
     private JLabel statusIcon;
 

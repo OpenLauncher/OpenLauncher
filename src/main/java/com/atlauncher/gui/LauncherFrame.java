@@ -44,7 +44,6 @@ implements RelocalizationListener{
     private PacksTab packsTab;
     private InstancesTab instancesTab;
     private AccountsTab accountsTab;
-    private ToolsTab toolsTab;
     private SettingsTab settingsTab;
 
     private List<Tab> tabs;
@@ -76,7 +75,7 @@ implements RelocalizationListener{
         LogManager.info("Finished Setting up Tabs");
 
         this.add(tabbedPane, BorderLayout.CENTER);
-        this.add(bottomBar, BorderLayout.SOUTH);
+        //this.add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
             LogManager.info("Showing Launcher");
@@ -101,7 +100,7 @@ implements RelocalizationListener{
      * Setup the individual tabs used in the Launcher sidebar
      */
     private void setupTabs() {
-        tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
+        tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
         newsTab = new NewsTab();
@@ -111,12 +110,11 @@ implements RelocalizationListener{
         instancesTab = new InstancesTab();
         App.settings.setInstancesPanel(instancesTab);
         accountsTab = new AccountsTab();
-        toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
-        this.tabs = Arrays.asList(new Tab[]{newsTab, packsTab, instancesTab, GuiUtils.customPacksTab, accountsTab, toolsTab, settingsTab});
+        this.tabs = Arrays.asList(new Tab[]{instancesTab, packsTab, GuiUtils.customPacksTab, newsTab, accountsTab, settingsTab});
 
-        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
+        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(30.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }

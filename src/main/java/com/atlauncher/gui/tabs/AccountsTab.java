@@ -25,28 +25,9 @@ import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class AccountsTab extends JPanel implements Tab {
     private static final long serialVersionUID = 2493791137600123223L;
@@ -329,6 +310,7 @@ public class AccountsTab extends JPanel implements Tab {
         userSkin.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
+        add(App.settings.bottomBar, BorderLayout.SOUTH);
     }
 
     @Override
