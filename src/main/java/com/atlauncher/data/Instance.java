@@ -53,6 +53,9 @@ import java.util.Map;
  * version of a ModPack separate to others by file structure.
  */
 public class Instance implements Cloneable {
+
+    public boolean isCustomPack = false;
+
     /**
      * The name of the Instance.
      */
@@ -452,6 +455,7 @@ public class Instance implements Cloneable {
     public boolean isLoggingEnabled() {
         return (this.realPack != null && this.realPack.isLoggingEnabled());
     }
+
 
     /**
      * This stops the popup informing a user that this Instance has an update when they go to play this Instance. It

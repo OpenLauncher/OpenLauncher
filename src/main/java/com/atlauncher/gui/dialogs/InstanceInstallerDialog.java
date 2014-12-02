@@ -69,6 +69,7 @@ public class InstanceInstallerDialog extends JDialog {
     private ArrayList<PackVersion> versions = new ArrayList<PackVersion>();
     private JLabel installForLabel;
     private JCheckBox installForMe;
+    private boolean isCustomPack = false;
 
     public InstanceInstallerDialog(Object object) {
         this(object, false, false);
@@ -342,6 +343,10 @@ public class InstanceInstallerDialog extends JDialog {
                                         newInstance.setHash(version.getHash());
                                     }
 
+                                    if(isCustomPack){
+                                        newInstance.isCustomPack = true;
+                                    }
+
                                     App.settings.getInstances().add(newInstance);
 
                                 }
@@ -495,6 +500,11 @@ public class InstanceInstallerDialog extends JDialog {
 
     public InstanceInstallerDialog(Pack pack, boolean isServer, String version) {
         this((Object) pack, false, true, version);
+    }
+
+    public InstanceInstallerDialog(Object object, String version, boolean isCustom) {
+        this(object, false, false, version);
+        isCustomPack = isCustom;
     }
 
 }
