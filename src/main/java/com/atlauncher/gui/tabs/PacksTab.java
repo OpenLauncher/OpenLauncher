@@ -254,4 +254,9 @@ public final class PacksTab extends JPanel implements Tab {
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.packs");
     }
+
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
 }

@@ -374,6 +374,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
     public void onRelocalization() {
         this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
                 .localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");

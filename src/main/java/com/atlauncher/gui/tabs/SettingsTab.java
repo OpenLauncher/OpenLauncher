@@ -111,6 +111,11 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     }
 
     @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
+
+    @Override
     public void onRelocalization() {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());

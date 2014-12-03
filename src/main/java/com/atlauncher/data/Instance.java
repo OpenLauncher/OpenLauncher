@@ -54,7 +54,7 @@ import java.util.Map;
  */
 public class Instance implements Cloneable {
 
-    public boolean isCustomPack = false;
+    private boolean CustomPack = false;
 
     /**
      * The name of the Instance.
@@ -253,6 +253,14 @@ public class Instance implements Cloneable {
                     boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
                 librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
+    }
+
+    public boolean getCustomPack() {
+        return CustomPack;
+    }
+
+    public void setCustomPack(boolean isCustomPack) {
+        this.CustomPack = isCustomPack;
     }
 
     /**

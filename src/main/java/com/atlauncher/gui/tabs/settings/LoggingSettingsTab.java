@@ -163,6 +163,11 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
     public void onRelocalization() {
         this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
         this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +

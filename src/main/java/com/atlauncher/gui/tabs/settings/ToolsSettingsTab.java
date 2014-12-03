@@ -119,6 +119,11 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
     public void onRelocalization() {
         this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
         this.enableServerCheckerLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +

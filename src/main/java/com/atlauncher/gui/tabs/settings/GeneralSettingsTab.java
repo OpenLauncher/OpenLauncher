@@ -268,6 +268,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
     public void onRelocalization() {
         this.languageLabel.setText(Language.INSTANCE.localize("settings.language") + ":");
         this.languageLabel.setToolTipText(Language.INSTANCE.localize("settings.languagehelp"));

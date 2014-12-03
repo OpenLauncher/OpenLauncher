@@ -344,7 +344,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     }
 
                                     if(isCustomPack){
-                                        newInstance.isCustomPack = true;
+                                        newInstance.setCustomPack(true);
                                     }
 
                                     App.settings.getInstances().add(newInstance);

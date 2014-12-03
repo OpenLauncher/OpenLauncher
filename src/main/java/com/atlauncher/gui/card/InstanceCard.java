@@ -110,15 +110,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         packName.setFont(boldFont);
         top.add(packName);
         top.add(this.playButton);
-        if(!instance.isCustomPack)
+        if(!instance.getCustomPack())
         top.add(this.reinstallButton);
-        if(!instance.isCustomPack)
+        if(!instance.getCustomPack())
         top.add(this.updateButton);
         top.add(this.renameButton);
         bottom.add(this.backupButton);
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
-        if(!instance.isCustomPack)
+        if(!instance.getCustomPack())
         bottom.add(this.editButton);
         bottom.add(this.openButton);
 
@@ -133,7 +133,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         RelocalizationManager.addListener(this);
 
-        if (!instance.hasUpdate() && !instance.isCustomPack) {
+        if (!instance.hasUpdate() && !instance.getCustomPack()) {
             this.updateButton.setVisible(false);
         }
 
@@ -185,7 +185,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) && !instance
-                        .isDev() && !instance.isCustomPack) {
+                        .isDev() && !instance.getCustomPack()) {
                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
                             + ".no"), Language.INSTANCE.localize("instance.dontremindmeagain")};
                     int ret = JOptionPane.showOptionDialog(App.settings.getParent(),

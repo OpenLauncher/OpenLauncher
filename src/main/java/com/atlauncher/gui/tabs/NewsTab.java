@@ -109,6 +109,11 @@ public class NewsTab extends JPanel implements Tab {
         return Language.INSTANCE.localize("tabs.news");
     }
 
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
+
     private final class ContextMenu extends JPopupMenu {
         private final JMenuItem COPY_ITEM = new JMenuItem(Language.INSTANCE.localize("common.copy"));
 

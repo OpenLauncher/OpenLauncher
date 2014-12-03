@@ -51,4 +51,9 @@ public class ToolsTab extends JPanel implements Tab {
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.tools");
     }
+
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
 }

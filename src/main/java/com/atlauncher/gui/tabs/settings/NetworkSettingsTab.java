@@ -284,6 +284,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
     public void onRelocalization() {
         this.downloadServerLabel.setText(Language.INSTANCE.localize("settings.downloadserver") + ":");
         this.downloadServerLabel.setToolTipText(Language.INSTANCE.localize("settings.downloadserverhelp"));

@@ -191,6 +191,11 @@ public class CustomPacksTab extends JPanel implements Tab {
         return "Custom Pack";
     }
 
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
+
     public void refresh() {
         ammoutOfMods.setText("Amount of mods in pack: " + modsToUse.size());
         repaint();

@@ -185,4 +185,9 @@ public class InstancesTab extends JPanel implements Tab {
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.instances");
     }
+
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
 }

@@ -115,8 +115,9 @@ implements RelocalizationListener{
         this.tabs = Arrays.asList(new Tab[]{instancesTab, packsTab, GuiUtils.customPacksTab, newsTab, accountsTab, settingsTab});
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(30.0F));
-        for (Tab tab : this.tabs) {
-            this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
+        for (int i = 0; i < this.tabs.size(); i++) {
+            this.tabbedPane.addTab("" /*tab.getTitle() */,new ImageIcon(Utils.getImage(this.tabs.get(i).getIcon())) , (JPanel) this.tabs.get(i));
+            this.tabbedPane.setToolTipTextAt(i, this.tabs.get(i).getTitle());
         }
         tabbedPane.addChangeListener(new ChangeListener(){
             @Override

@@ -317,4 +317,9 @@ public class AccountsTab extends JPanel implements Tab {
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.accounts");
     }
+
+    @Override
+    public String getIcon() {
+        return "/assets/image/OldMinecraftIcon.png";
+    }
 }
