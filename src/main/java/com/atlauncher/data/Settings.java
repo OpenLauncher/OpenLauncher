@@ -222,7 +222,8 @@ public class Settings {
 
         checkForLauncherUpdate();
 
-        downloadExternalLibraries();
+        //This is disabled becuase we pack the the libs with the jar //TODO chnage this
+        // downloadExternalLibraries();
 
         if (!Utils.checkAuthLibLoaded()) {
             LogManager.error("AuthLib was not loaded into the classpath!");

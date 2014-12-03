@@ -49,21 +49,17 @@ repositories {
     }
 }
 
-def grabDep(name, url){
-    ant.get(src: url, dest: 'dep')
-    file("dep/" + url.substring(url.lastIndexOf("/"))).renameTo(file("dep/" + name + ".jar"))
-}
-
-
 dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'org.tukaani:xz:1.5'
     compile 'com.mojang:authlib:1.5.17'
     compile 'com.google.guava:guava:17.0'
-    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
-    grabDep('weblaf', 'http://weblookandfeel.com/downloads/gpl/weblaf-complete-1.28.jar')
-    compile files("dep/weblaf.jar")
+    compile "commons-io:commons-io:2.4"
+    compile "commons-lang3:commons-lang3:3.3.2"
+    compile 'org.apache.logging.log4j:log4j-api:2.1'
+    compile 'org.apache.logging.log4j:log4j-core:2.1'
+    compile 'de.sciss.weblaf:weblaf:1.28'
 }
 
 jar {
