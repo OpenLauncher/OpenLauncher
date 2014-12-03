@@ -237,9 +237,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public boolean needToReloadTheme() {
-        if(theme.getSelectedItem() == null)
-            return false;
-        return !((String) theme.getSelectedItem()).equalsIgnoreCase(App.settings.getTheme());
+        return false;
     }
 
     public boolean needToReloadPacksPanel() {
@@ -252,7 +250,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     public void save() {
         App.settings.setLanguage((String) language.getSelectedItem());
-        App.settings.setTheme((String) theme.getSelectedItem());
+//        App.settings.setTheme((String) theme.getSelectedItem());
         App.settings.setDateFormat((String) dateFormat.getSelectedItem());
         App.settings.setAdvancedBackups(advancedBackup.isSelected());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
