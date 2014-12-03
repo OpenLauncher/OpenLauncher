@@ -42,6 +42,11 @@ sourceCompatibility = '1.6' // tergetCompatibility set by this automatically
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = 'Mojang libs'
+        url = 'https://libraries.minecraft.net/'
+    }
 }
 
 def grabDep(name, url){
@@ -54,9 +59,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'org.tukaani:xz:1.5'
-
-    testCompile 'junit:junit:4.11'
-
+    compile 'com.mojang:authlib:1.5.17'
+    compile 'com.google.guava:guava:17.0'
+    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
     grabDep('weblaf', 'http://weblookandfeel.com/downloads/gpl/weblaf-complete-1.28.jar')
     compile files("dep/weblaf.jar")
 }

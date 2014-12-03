@@ -27,18 +27,29 @@ import com.atlauncher.writer.LogEventWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
 public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
     private final BlockingQueue<LogEvent> queue;
+    private static final String date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+    public static final String filename = Constants.launcherName + "_" + date + ".log";
 
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
+        File log = new File(App.settings.getLogsDir(), filename);
+        if(!log.exists()) {
+	        try {
+	        	log.createNewFile();
+	        } catch (IOException e) {
+	        	e.printStackTrace();
+	        }
+        }
         try {
-            this.writer = new LogEventWriter(new FileWriter(new File(App.settings.getBaseDir(),
-                    Constants.launcherName +"-Log-1.txt")));
+            this.writer = new LogEventWriter(new FileWriter(log));
             this.writer.write("Generated on " + Timestamper.now() + "\n");
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override

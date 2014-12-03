@@ -21,7 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.data.LoginResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 
@@ -114,6 +114,14 @@ public class AccountsTab extends JPanel implements Tab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         usernameField = new JTextField(16);
+        usernameField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    leftButtonActions();
+                }
+            }
+        });
         bottomPanel.add(usernameField, gbc);
 
         gbc.gridx = 0;
@@ -127,6 +135,14 @@ public class AccountsTab extends JPanel implements Tab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    leftButtonActions();
+                }
+            }
+        });
         bottomPanel.add(passwordField, gbc);
 
         gbc.gridx = 0;
@@ -148,11 +164,11 @@ public class AccountsTab extends JPanel implements Tab {
                 if (rememberField.isSelected()) {
                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
                             + ".no")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                            "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("account" + "" +
-                                    ".rememberpasswordwarning", "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                            Language.INSTANCE.localizeWithReplace("account" + "" +
+                                    ".rememberpasswordwarning", "<br/><br/>") + "</p></html>", Language.INSTANCE
+                            .localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                            .ERROR_MESSAGE, null, options, options[0]);
                     if (ret != 0) {
                         rememberField.setSelected(false);
                     }
@@ -170,88 +186,7 @@ public class AccountsTab extends JPanel implements Tab {
         leftButton = new JButton(Language.INSTANCE.localize("common.add"));
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInOfflineMode()) {
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                    ".offlinemode"), Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                } else {
-                    Account account;
-                    String username = usernameField.getText();
-                    String password = new String(passwordField.getPassword());
-                    boolean remember = rememberField.isSelected();
-                    if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" +
-                                ".exists"), Language.INSTANCE.localize("account.notadded"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                        return;
-                    }
-
-                    LogManager.info("Logging into Minecraft!");
-                    final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                            ".loggingin"), 0, Language.INSTANCE.localize("account.loggingin"),
-                            "Aborting login for " + usernameField.getText());
-                    dialog.addThread(new Thread() {
-                        public void run() {
-                            AuthenticationResponse resp = Authentication.checkAccount(usernameField.getText(),
-                                    new String(passwordField.getPassword()));
-                            dialog.setReturnValue(resp);
-                            dialog.close();
-                        }
-                    });
-                    dialog.start();
-                    AuthenticationResponse response = (AuthenticationResponse) dialog.getReturnValue();
-                    if (response != null && !response.hasError()) {
-
-                        if (accountsComboBox.getSelectedIndex() == 0) {
-                            account = new Account(username, password, response.getSelectedProfile().getName(),
-                                    response.getSelectedProfile().getId(), remember);
-                            App.settings.addAccount(account);
-                            LogManager.info("Added Account " + account);
-                            String[] options = {Language.INSTANCE.localize("common.yes"),
-                                    Language.INSTANCE.localize("common.no")};
-                            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                    Language.INSTANCE.localize("account.addedswitch"),
-                                    Language.INSTANCE.localize("account.added"), JOptionPane.DEFAULT_OPTION,
-                                    JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                            if (ret == 0) {
-                                App.settings.switchAccount(account);
-                            }
-                        } else {
-                            account = (Account) accountsComboBox.getSelectedItem();
-                            account.setUsername(username);
-                            account.setMinecraftUsername(response.getSelectedProfile().getName());
-                            account.setUUID(response.getSelectedProfile().getId());
-                            if (remember) {
-                                account.setPassword(password);
-                            }
-                            account.setRemember(remember);
-                            LogManager.info("Edited Account " + account);
-                            String[] options = {Language.INSTANCE.localize("common.ok")};
-                            JOptionPane.showOptionDialog(App.settings.getParent(),
-                                    Language.INSTANCE.localize("account.editeddone"),
-                                    Language.INSTANCE.localize("account.edited"), JOptionPane.DEFAULT_OPTION,
-                                    JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                        }
-                        App.settings.saveAccounts();
-                        App.settings.reloadAccounts();
-                        accountsComboBox.removeAllItems();
-                        accountsComboBox.addItem(fillerAccount);
-                        for (Account accountt : App.settings.getAccounts()) {
-                            accountsComboBox.addItem(accountt);
-                        }
-                        accountsComboBox.setSelectedItem(account);
-                    } else {
-                        LogManager.error((response == null ? "Unknown Error Logging In" : response.getErrorMessage()));
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + Language.INSTANCE.localize("account.incorrect") +
-                                        "<br/><br/>" + (response == null ? "Unknown Error" : response.getErrorMessage
-                                        ()) + "</p></html>", Language.INSTANCE.localize("account.notadded"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                    }
-                }
+                leftButtonActions();
             }
         });
         rightButton = new JButton(Language.INSTANCE.localize("common.clear"));
@@ -263,9 +198,9 @@ public class AccountsTab extends JPanel implements Tab {
                     rememberField.setSelected(false);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
-                    int res = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                            Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()),
-                            Language.INSTANCE.localize("account.delete"), JOptionPane.YES_NO_OPTION);
+                    int res = JOptionPane.showConfirmDialog(App.settings.getParent(), Language.INSTANCE
+                            .localizeWithReplace("account.deletesure", usernameField.getText()), Language.INSTANCE
+                            .localize("account.delete"), JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
                         App.settings.removeAccount(account);
                         accountsComboBox.removeAllItems();
@@ -311,6 +246,89 @@ public class AccountsTab extends JPanel implements Tab {
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
         add(App.settings.bottomBar, BorderLayout.SOUTH);
+    }
+
+    private void leftButtonActions() {
+        if (App.settings.isInOfflineMode()) {
+            String[] options = {Language.INSTANCE.localize("common.ok")};
+            JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
+                    ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+        } else {
+            Account account;
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            boolean remember = rememberField.isSelected();
+            if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+                String[] options = {Language.INSTANCE.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" +
+                        ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                return;
+            }
+
+            LogManager.info("Logging into Minecraft!");
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
+                    ".loggingin"), 0, Language.INSTANCE.localize("account.loggingin"), "Aborting login for "
+                    + usernameField.getText());
+            dialog.addThread(new Thread() {
+                public void run() {
+                    LoginResponse resp = Authentication.checkAccount(usernameField.getText(), new String
+                            (passwordField.getPassword()));
+                    dialog.setReturnValue(resp);
+                    dialog.close();
+                }
+            });
+            dialog.start();
+            LoginResponse response = (LoginResponse) dialog.getReturnValue();
+            if (response != null && response.hasAuth() && response.isValidAuth()) {
+                if (accountsComboBox.getSelectedIndex() == 0) {
+                    account = new Account(username, password, response.getAuth().getSelectedProfile().getName
+                            (), response.getAuth().getSelectedProfile().getId().toString(), remember);
+                    App.settings.addAccount(account);
+                    LogManager.info("Added Account " + account);
+                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize
+                            ("common.no")};
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE
+                                    .localize("account.addedswitch"), Language.INSTANCE.localize("account.added"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
+                            options[0]);
+                    if (ret == 0) {
+                        App.settings.switchAccount(account);
+                    }
+                } else {
+                    account = (Account) accountsComboBox.getSelectedItem();
+                    account.setUsername(username);
+                    account.setMinecraftUsername(response.getAuth().getSelectedProfile().getName());
+                    account.setUUID(response.getAuth().getSelectedProfile().getId().toString());
+                    if (remember) {
+                        account.setPassword(password);
+                    }
+                    account.setRemember(remember);
+                    LogManager.info("Edited Account " + account);
+                    String[] options = {Language.INSTANCE.localize("common.ok")};
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
+                            ("account.editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane
+                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                }
+                response.save();
+                App.settings.reloadAccounts();
+                accountsComboBox.removeAllItems();
+                accountsComboBox.addItem(fillerAccount);
+                for (Account accountt : App.settings.getAccounts()) {
+                    accountsComboBox.addItem(accountt);
+                }
+                accountsComboBox.setSelectedItem(account);
+            } else {
+                LogManager.error(response.getErrorMessage());
+                String[] options = {Language.INSTANCE.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                                Language.INSTANCE.localize("account.incorrect") +
+                                "<br/><br/>" + response.getErrorMessage() + "</p></html>", Language.INSTANCE
+                                .localize("account.notadded"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
+            }
+        }
     }
 
     @Override

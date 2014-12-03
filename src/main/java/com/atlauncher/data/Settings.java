@@ -18,9 +18,11 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.adapter.ColorTypeAdapter;
+import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
@@ -32,6 +34,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
@@ -55,6 +58,17 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -101,6 +115,7 @@ public class Settings {
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
     private int concurrentConnections; // Number of concurrent connections to open when downloading
+    private int daysOfLogsToKeep; // Number of days of logs to keep
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
@@ -125,11 +140,12 @@ public class Settings {
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
+    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
-            instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile,
-            userDataFile, propertiesFile;
+            commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+            usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile,
+            checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -159,7 +175,6 @@ public class Settings {
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
-        rotateLogFiles(); // Rotates the log files
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
@@ -171,6 +186,7 @@ public class Settings {
     public void setupFiles() {
         baseDir = Utils.getCoreGracefully();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
+        logsDir = new File(baseDir, "Logs");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
@@ -182,6 +198,7 @@ public class Settings {
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
         librariesDir = new File(configsDir, "Libraries");
+        launcherLibrariesdir = new File(librariesDir, "Launcher");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
         instancesDir = new File(baseDir, "Instances");
@@ -205,6 +222,12 @@ public class Settings {
 
         checkForLauncherUpdate();
 
+        downloadExternalLibraries();
+
+        if (!Utils.checkAuthLibLoaded()) {
+            LogManager.error("AuthLib was not loaded into the classpath!");
+        }
+
         loadNews(); // Load the news
 
         this.languageLoaded = true; // Languages are now loaded
@@ -224,6 +247,8 @@ public class Settings {
         loadProperties(); // Load the users Properties
 
         console.setupLanguage(); // Setup language on the console
+
+        clearOldLogs(); // Clear all the old logs out
 
         checkResources(); // Check for new format of resources
 
@@ -356,6 +381,75 @@ public class Settings {
             }
         }
         this.saveProperties();
+    }
+
+    public void clearOldLogs() {
+        LogManager.debug("Clearing out old logs");
+
+        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+
+        if (logFile3.exists()) {
+            Utils.delete(logFile3);
+        }
+
+        if (logFile2.exists()) {
+            Utils.delete(logFile2);
+        }
+
+        if (logFile1.exists()) {
+            Utils.delete(logFile1);
+        }
+
+        Date toDeleteAfter = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(toDeleteAfter);
+        calendar.add(Calendar.DATE, -(getDaysOfLogsToKeep()));
+        toDeleteAfter = calendar.getTime();
+
+        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+            try {
+                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
+                        ("ATLauncher-Log_", "").replace(".log", ""));
+
+                if (date.before(toDeleteAfter)) {
+                    Utils.delete(file);
+                    LogManager.debug("Deleting log file " + file.getName());
+                }
+            } catch (java.text.ParseException e) {
+                LogManager.error("Invalid log file " + file.getName());
+            }
+        }
+
+        LogManager.debug("Finished clearing out old logs");
+    }
+
+    public void clearAllLogs() {
+        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+
+        if (logFile3.exists()) {
+            Utils.delete(logFile3);
+        }
+
+        if (logFile2.exists()) {
+            Utils.delete(logFile2);
+        }
+
+        if (logFile1.exists()) {
+            Utils.delete(logFile1);
+        }
+
+        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+            if(file.getName().equals(LoggingThread.filename)) {
+                continue; // Skip current log
+            }
+
+            Utils.delete(file);
+        }
     }
 
     public void checkResources() {
@@ -644,13 +738,72 @@ public class Settings {
         LogManager.debug("Finished checking for launcher update");
     }
 
+    private void downloadExternalLibraries() {
+        LogManager.debug("Downloading external libraries");
+
+        FileReader fr = null;
+
+        try {
+            fr = new FileReader(new File(this.jsonDir, "libraries.json"));
+
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
+            }.getType();
+
+            this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
+        } catch (Exception e) {
+            logStackTrace(e);
+        } finally {
+            if (fr != null) {
+                try {
+                    fr.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(getConcurrentConnections());
+
+        for (final LauncherLibrary library : this.launcherLibraries) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    Downloadable download = library.getDownloadable();
+
+                    if(download.needToDownload()) {
+                        LogManager.info("Downloading library " + library.getFilename() + "!");
+                        download.download(false);
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        for (LauncherLibrary library : this.launcherLibraries) {
+            File file = library.getFile();
+
+            if (library.shouldAutoLoad() && !Utils.addToClasspath(file)) {
+                LogManager.error("Couldn't add " + file + " to the classpath!");
+                if (library.shouldExitOnFail()) {
+                    LogManager.error("Library is necessary so launcher will exit!");
+                    System.exit(1);
+                }
+            }
+        }
+
+        LogManager.debug("Finished downloading external libraries");
+    }
+
     /**
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
         File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir,
-                failedDownloadsDir};
+                resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir, instancesDir,
+                serversDir, tempDir, failedDownloadsDir, logsDir};
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -785,6 +938,15 @@ public class Settings {
     }
 
     /**
+     * Returns the launchers libraries directory
+     *
+     * @return File object for the libraries directory
+     */
+    public File getLauncherLibrariesDir() {
+        return this.launcherLibrariesdir;
+    }
+
+    /**
      * Returns the languages directory
      *
      * @return File object for the languages directory
@@ -843,36 +1005,19 @@ public class Settings {
     }
 
     /**
+     * Returns the logs directory
+     *
+     * @return File object for the logs directory
+     */
+    public File getLogsDir() {
+        return this.logsDir;
+    }
+
+    /**
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
         Utils.deleteContents(getTempDir());
-    }
-
-    public void rotateLogFiles() {
-        File logFile1 = new File(getBaseDir(), Constants.launcherName + "-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), Constants.launcherName + "-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), Constants.launcherName + "-Log-3.txt");
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-        if (logFile2.exists()) {
-            logFile2.renameTo(logFile3);
-        }
-        if (logFile1.exists()) {
-            logFile1.renameTo(logFile2);
-        }
-        try {
-            logFile1.createNewFile();
-        } catch (IOException e) {
-            String[] options = {"OK"};
-            JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make " +
-                            "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions " +
-                            "for your " +
-                            "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-            System.exit(0);
-        }
     }
 
     /**
@@ -994,6 +1139,11 @@ public class Settings {
             this.concurrentConnections = Integer.parseInt(properties.getProperty("concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
                 this.concurrentConnections = 8;
+            }
+
+            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
+            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
+                this.daysOfLogsToKeep = 7;
             }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
@@ -1181,6 +1331,14 @@ public class Settings {
 
             this.theme = properties.getProperty("theme", Constants.launcherName);
 
+            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
+            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
+                // Days of logs to keep should be 1 or more but less than 30
+                LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep +
+                        " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
+                this.daysOfLogsToKeep = 7;
+            }
+
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
@@ -1251,6 +1409,7 @@ public class Settings {
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
+            properties.setProperty("daysoflogstokeep", this.daysOfLogsToKeep + "");
             //properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
@@ -2283,7 +2442,7 @@ public class Settings {
      * @param username Username of the Account to find
      * @return Account if the Account is found from the username
      */
-    private Account getAccountByName(String username) {
+    public Account getAccountByName(String username) {
         for (Account account : accounts) {
             if (account.getUsername().equalsIgnoreCase(username)) {
                 return account;
@@ -2763,6 +2922,14 @@ public class Settings {
         this.concurrentConnections = concurrentConnections;
     }
 
+    public int getDaysOfLogsToKeep() {
+        return this.daysOfLogsToKeep;
+    }
+
+    public void setDaysOfLogsToKeep(int daysOfLogsToKeep) {
+        this.daysOfLogsToKeep = daysOfLogsToKeep;
+    }
+
     public String getTheme() {
         return this.theme;
     }
@@ -2807,6 +2974,30 @@ public class Settings {
                         "disabled!");
                 this.enableProxy = false;
                 return null;
+            }
+            this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
+        }
+        return this.proxy;
+    }
+
+    public Proxy getProxyForAuth() {
+        if (!this.enableProxy) {
+            return Proxy.NO_PROXY;
+        }
+        if (this.proxy == null) {
+            Type type;
+            if (this.proxyType.equals("HTTP")) {
+                type = Proxy.Type.HTTP;
+            } else if (this.proxyType.equals("SOCKS")) {
+                type = Proxy.Type.SOCKS;
+            } else if (this.proxyType.equals("DIRECT")) {
+                type = Proxy.Type.DIRECT;
+            } else {
+                // Oh noes, problem!
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
+                        "disabled!");
+                this.enableProxy = false;
+                return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }

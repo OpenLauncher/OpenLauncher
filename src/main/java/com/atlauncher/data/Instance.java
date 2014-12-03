@@ -20,21 +20,15 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -1073,69 +1067,25 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            AuthenticationResponse sess = null;
-            if (account.hasAccessToken() && account.isAccessTokenValid()) {
-                LogManager.info("Access token checked and is valid!");
-                sess = account.refreshToken();
-            } else {
-                if (account.hasAccessToken()) {
-                    LogManager.error("Access token checked and is NOT valid! Will attempt to get another one!");
-                    account.setAccessToken(null);
-                    App.settings.saveAccounts();
+
+
+            LogManager.info("Logging into Minecraft!");
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+                    Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
+            dialog.addThread(new Thread() {
+                public void run() {
+                    dialog.setReturnValue(account.login());
+                    dialog.close();
                 }
-                String password = account.getPassword();
-                if (!account.isRemembered()) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BorderLayout());
-                    JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
-                            account.getMinecraftUsername()));
-                    JPasswordField passwordField = new JPasswordField();
-                    panel.add(passwordLabel, BorderLayout.NORTH);
-                    panel.add(passwordField, BorderLayout.CENTER);
-                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE
-                            .localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
-                    if (ret == JOptionPane.OK_OPTION) {
-                        password = new String(passwordField.getPassword());
-                    } else {
-                        LogManager.error("Aborting login for " + account.getMinecraftUsername());
-                        App.settings.setMinecraftLaunched(false);
-                        return false;
-                    }
-                }
-                LogManager.info("Logging into Minecraft!");
-                final String pass = password;
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                        Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + account
-                        .getMinecraftUsername());
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        dialog.setReturnValue(Authentication.checkAccount(account.getUsername(), pass, (account
-                                .hasAccessToken() ? account.getClientToken() : null)));
-                        dialog.close();
-                    }
-                });
-                dialog.start();
-                sess = (AuthenticationResponse) dialog.getReturnValue();
-            }
-            if (sess == null) {
-                sess = new AuthenticationResponse("token:0:0", false);
-            } else if (sess.hasError()) {
-                LogManager.error(sess.getErrorMessage());
-                String[] options = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                        .INSTANCE.localizeWithReplace("instance.errorloggingin", "<br/><br/>" + sess.getErrorMessage
-                                ()) + "</p></html>", Language.INSTANCE.localize("instance.errorloggingintitle"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                App.settings.setMinecraftLaunched(false);
+            });
+            dialog.start();
+
+            final LoginResponse session = (LoginResponse) dialog.getReturnValue();
+
+            if(session == null) {
                 return false;
-            } else {
-                account.setAccessToken(sess.getAccessToken());
-                account.setClientToken(sess.getClientToken());
-                account.setUUID(sess.getSelectedProfile().getId());
-                App.settings.saveAccounts();
             }
 
-            final AuthenticationResponse session = sess;
             Thread launcher = new Thread() {
                 public void run() {
                     try {
@@ -1178,9 +1128,6 @@ public class Instance implements Cloneable {
                                 line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
                                 if (account.hasAccessToken()) {
                                     line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                                }
-                                if (account.hasClientToken()) {
-                                    line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
                                 }
                                 if (account.hasUUID()) {
                                     line = line.replace(account.getUUID(), "**UUID**");
@@ -1275,6 +1222,7 @@ public class Instance implements Cloneable {
             launcher.start();
             return true;
         }
+
     }
 
     /**

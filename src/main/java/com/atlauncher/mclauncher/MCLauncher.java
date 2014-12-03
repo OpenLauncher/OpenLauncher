@@ -18,28 +18,27 @@
 package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
-import com.atlauncher.data.mojang.auth.UserType;
+import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.util.UUIDTypeAdapter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class MCLauncher {
 
-    public static Process launch(Account account, Instance instance, AuthenticationResponse response) throws
-            IOException {
+    public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -187,8 +186,14 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        String props = new Gson().toJson((response.getUser() == null ? new HashMap<String,
-                Collection<String>>() : response.getProperties()));
+
+        String props = "";
+
+        if (!response.isOffline()) {
+            Gson gson = new GsonBuilder().registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer()).create();
+            props = gson.toJson(response.getAuth().getUserProperties());
+        }
+
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
@@ -200,20 +205,20 @@ public class MCLauncher {
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
                 argument = argument.replace("${assets_root}", App.settings.getResourcesDir().getAbsolutePath());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
-                argument = argument.replace("${auth_uuid}", account.getUUID());
+                argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
-                argument = argument.replace("${auth_session}", account.getSession());
-                argument = argument.replace("${user_type}", (response.getSelectedProfile().isLegacy() ? UserType
-                        .LEGACY.getName() : UserType.MOJANG.getName()));
+                argument = argument.replace("${auth_session}", account.getSession(response));
+                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG
+                        .getName() : response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {
             arguments.add("--username=" + account.getMinecraftUsername());
-            arguments.add("--session=" + account.getSession());
+            arguments.add("--session=" + account.getSession(response));
 
             // This is for 1.7
             arguments.add("--accessToken=" + account.getAccessToken());
-            arguments.add("--uuid=" + account.getUUID());
+            arguments.add("--uuid=" + UUIDTypeAdapter.fromUUID(account.getRealUUID()));
             // End of stuff for 1.7
 
             arguments.add("--version=" + instance.getMinecraftVersion());
@@ -242,7 +247,7 @@ public class MCLauncher {
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(account.getUUID(), "REDACTED");
             argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-            argsString = argsString.replace(account.getSession(), "REDACTED");
+            argsString = argsString.replace(account.getSession(response), "REDACTED");
             argsString = argsString.replace(props, "REDACTED");
         }
 

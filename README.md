@@ -17,24 +17,6 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 + Please update the CHANGELOG.md file when fixing/adding something so it's easier to keep track of than git commits. Feel free to add in a 'by MyUsername' to the end of the changes you've made.
 + Please don't do large commits. My preference is a single commit for a single fix/addition rather than bundled up commits.
 
-## Versioning System
-
-Starting with version 3.2.1.0 a new versioning system was put into place. It works off the following:
-
-Reserved.Major.Minor.Revision
-
-So for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only incremented on complete rewrites.
-
-Major should be incremented when large changes/features are made.
-
-Minor should be incremented when small changes/features are made.
-
-Revision should be incremented when there are no new features and only contains bug fixes for the previous minor.
-
-### Need Help/Have Questions?
-
-If you have questions please don't hesitate to [contact us](http://www.atlauncher.com/contactus/)
-
 ### License
 
 This work is licensed under the GNU General Public License v3.0. To view a copy of this license, visit http://www.gnu.org/licenses/gpl-3.0.txt.

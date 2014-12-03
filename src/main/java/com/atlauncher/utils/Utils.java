@@ -73,6 +73,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
@@ -120,14 +121,47 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        URL url = System.class.getResource(path);
+        try {
+            File themeFile = App.settings.getThemeFile();
 
-        if (url == null) {
-            LogManager.error("Unable to load resource " + path);
+            if(themeFile != null) {
+                InputStream stream = null;
+
+                ZipFile zipFile = new ZipFile(themeFile);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
+                        stream = zipFile.getInputStream(entry);
+                        break;
+                    }
+                }
+
+                if (stream != null) {
+                    BufferedImage image = ImageIO.read(stream);
+
+                    stream.close();
+                    zipFile.close();
+
+                    return new ImageIcon(image);
+                }
+
+                zipFile.close();
+            }
+
+            URL url = System.class.getResource(path);
+
+            if (url == null) {
+                LogManager.error("Unable to load resource " + path);
+                return null;
+            }
+
+            return new ImageIcon(url);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
             return null;
         }
-
-        return new ImageIcon(url);
     }
 
     public static File getCoreGracefully() {
@@ -1303,6 +1337,21 @@ public class Utils {
     }
 
     /**
+     * Gets the logs file filter.
+     *
+     * @return the logs file filter
+     */
+    public static FilenameFilter getLogsFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                return file.isFile() && name.startsWith("ATLauncher-Log_") && name.endsWith(".log");
+            }
+        };
+    }
+
+    /**
      * Gets the instance file filter.
      *
      * @return the instance file filter
@@ -1982,5 +2031,58 @@ public class Utils {
         }
 
         return getMD5(returnStr);
+    }
+
+    /**
+     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     */
+    public static boolean addToClasspath (File file) {
+        LogManager.info("Loading external library " + file.getName() + " to classpath");
+        try {
+            if (file.exists()) {
+                addURL(file.toURI().toURL());
+            } else {
+                LogManager.error("Error loading AuthLib");
+            }
+        } catch (Throwable t) {
+            if(t.getMessage() != null) {
+                LogManager.error(t.getMessage());
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean checkAuthLibLoaded() {
+        try {
+            App.settings.getClass().forName("com.mojang.authlib.exceptions.AuthenticationException");
+            App.settings.getClass().forName("com.mojang.authlib.Agent");
+            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
+            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
+        } catch (ClassNotFoundException e) {
+            App.settings.logStackTrace(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     */
+    public static void addURL(URL u) throws IOException {
+        URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
+        Class sysclass = URLClassLoader.class;
+        try {
+            Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(sysloader, u);
+        } catch (Throwable t) {
+            if(t.getMessage() != null) {
+                LogManager.error(t.getMessage());
+            }
+            throw new IOException("Error, could not add URL to system classloader");
+        }
     }
 }
