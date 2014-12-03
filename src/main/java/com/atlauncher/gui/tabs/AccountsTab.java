@@ -280,7 +280,9 @@ public class AccountsTab extends JPanel implements Tab {
                 }
             });
             dialog.start();
+
             LoginResponse response = (LoginResponse) dialog.getReturnValue();
+
             if (response != null && response.hasAuth() && response.isValidAuth()) {
                 if (accountsComboBox.getSelectedIndex() == 0) {
                     account = new Account(username, password, response.getAuth().getSelectedProfile().getName
