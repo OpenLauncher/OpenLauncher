@@ -216,6 +216,14 @@ public class Settings {
         checkCreeperRepoEdges();
         loadServerProperty(false); // Get users Server preference
 
+
+        LogManager.warn(this.server.getName());
+
+        if(this.server == null){
+            this.server = servers.get(0);
+            LogManager.warn("Forced to use " + this.server.getName());
+        }
+
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -1055,12 +1063,10 @@ public class Settings {
         LogManager.debug("Loading server to use");
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            String serv = properties.getProperty("server", "Auto");
+            String serv = properties.getProperty("server", "england3.creeperrepo.net");
             if (isServerByName(serv)) {
-                if (!userSelectableOnly || (userSelectableOnly && server.isUserSelectable())) {
                     this.server = getServerByName(serv);
                     this.originalServer = this.server;
-                }
             }
             if (this.server == null) {
                 LogManager.warn("Server " + serv + " is invalid");
@@ -1475,7 +1481,7 @@ public class Settings {
      * These MUST be hardcoded in order for the Launcher to make the initial connections to download files
      */
     private void setupServers() {
-        this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+        this.servers = new ArrayList<Server>();
     }
 
     private void findActiveServers() {
@@ -1511,25 +1517,15 @@ public class Settings {
                 Object obj = parser.parse(response);
                 JSONObject jsonObject = (JSONObject) obj;
                 Collection<String> values = jsonObject.values();
-                for (Server server : this.servers) {
-                    if (!server.isMaster() && !server.getName().equalsIgnoreCase("Auto")) {
-                        if (!values.contains(server.getHost())) {
-                            LogManager.warn("Server " + server.getHost() + " is no longer available!");
-                            server.disableServer();
-                        }
-                    }
+                for (String string : values) {
+                    this.servers.add(new Server(string, string + "/OpenLauncher/", true, false));
+                    LogManager.warn("Added " + string + "/OpenLauncher/");
+                }
+                if (values.size() == 0){
+                    this.servers.add(new Server("Auto", "www.creeperrepo.net/OpenLauncher", false, false));
+                    LogManager.warn("There was an error so we are running of the master server!");
                 }
             }
-
-            ArrayList<Server> newServers = new ArrayList<Server>();
-
-            for (Server server : this.servers) {
-                if (!server.isDisabled()) {
-                    newServers.add(server);
-                }
-            }
-
-            this.servers = newServers;
         } catch (ParseException e) {
             this.logStackTrace(e);
         }
