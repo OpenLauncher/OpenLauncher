@@ -214,7 +214,7 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         checkCreeperRepoEdges();
-        loadServerProperty(false); // Get users Server preference
+        loadServerProperty(true); // Get users Server preference
 
 
         LogManager.warn(this.server.getName());
@@ -1387,8 +1387,7 @@ public class Settings {
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
-            //This is disabled becuase we dont use servers
-//            properties.setProperty("server", this.server.getName());
+            properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");
