@@ -22,6 +22,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,9 +69,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         language = new JComboBox<String>(Language.available());
         language.setSelectedItem(Language.current());
         add(language, gbc);
-
-        // Theme
-
+        
 //        gbc.gridx = 0;
 //        gbc.gridy++;
 //        gbc.insets = LABEL_INSETS;
@@ -79,8 +78,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 //        themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
 //                ".requiresrestart"), RESTART_BORDER);
 //
-//        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
-//                Language.INSTANCE.localize("settings.themehelp"));
+//        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON, Language
+//                .INSTANCE.localize("settings.themehelp"));
 //
 //        themeLabelPanel = new JPanel();
 //        themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -99,6 +98,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 //        theme.setSelectedItem(App.settings.getTheme());
 //
 //        add(theme, gbc);
+
 
         // Date Format
 
@@ -130,8 +130,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         advancedBackupLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.advancedbackup") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp",
-                "<br/>") + "</html>");
+                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp", "<br/>") +
+                "</html>");
         add(advancedBackupLabel, gbc);
 
         gbc.gridx++;

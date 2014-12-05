@@ -1082,7 +1082,7 @@ public class Instance implements Cloneable {
 
             final LoginResponse session = (LoginResponse) dialog.getReturnValue();
 
-            if(session == null) {
+            if (session == null) {
                 return false;
             }
 

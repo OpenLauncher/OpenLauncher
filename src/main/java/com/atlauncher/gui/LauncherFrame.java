@@ -36,9 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame
-extends JFrame
-implements RelocalizationListener{
+public final class LauncherFrame extends JFrame implements RelocalizationListener {
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -84,13 +82,14 @@ implements RelocalizationListener{
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(new Runnable(){
-            public void run(){
+        App.TASKPOOL.execute(new Runnable() {
+            public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
         });
     }
+
 
     public void updateTitle(String str){
         setTitle(Constants.launcherName + Constants.VERSION + " - " + str);
@@ -119,13 +118,13 @@ implements RelocalizationListener{
             this.tabbedPane.addTab("" /*tab.getTitle() */,new ImageIcon(Utils.getImage(this.tabs.get(i).getIcon())) , (JPanel) this.tabs.get(i));
             this.tabbedPane.setToolTipTextAt(i, this.tabs.get(i).getTitle());
         }
-        tabbedPane.addChangeListener(new ChangeListener(){
+        tabbedPane.addChangeListener(new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e){
+            public void stateChanged(ChangeEvent e) {
                 String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                if(tabbedPane.getSelectedIndex() == 1){
+                if (tabbedPane.getSelectedIndex() == 1) {
                     updateTitle("Packs - " + App.settings.getPackInstallableCount());
-                } else{
+                } else {
                     updateTitle(tabName);
                 }
 

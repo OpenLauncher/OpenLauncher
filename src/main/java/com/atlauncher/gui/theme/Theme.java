@@ -22,6 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -32,6 +33,7 @@ public final class Theme {
             new Color(255, 255, 255), new Color(255, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0),
             new Color(145, 0, 255), new Color(255, 0, 0), new Color(0, 0, 0), "Herculanum", "Herculanum",
             "Herculanum", "Herculanum");
+
 
     // Meta
     private final String name;
@@ -61,12 +63,12 @@ public final class Theme {
     // Fonts
     private final String defaultFont, consoleFont, tabFont, buttonFont;
 
-    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor,
-                  Color buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor,
-                  Color modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor,
-                  Color corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor,
-                  Color logErrorColor, Color logDebugColor, String defaultFont, String consoleFont, String tabFont,
-                  String buttonFont) {
+    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor, Color
+            buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor, Color
+            modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor, Color
+            corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor, Color
+            logErrorColor, Color logDebugColor, String defaultFont, String consoleFont, String tabFont, String
+            buttonFont) {
 
         this.name = name;
         this.author = author;
