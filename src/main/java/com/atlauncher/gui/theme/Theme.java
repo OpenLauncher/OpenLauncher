@@ -31,8 +31,8 @@ public final class Theme {
             255), new Color(40, 45, 50), new Color(231, 231, 231), new Color(0, 136, 204), new Color(40, 45, 50),
             new Color(80, 170, 107), new Color(255, 255, 255), new Color(40, 25, 50), new Color(255, 255, 255),
             new Color(255, 255, 255), new Color(255, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0),
-            new Color(145, 0, 255), new Color(255, 0, 0), new Color(0, 0, 0), "Herculanum", "Herculanum",
-            "Herculanum", "Herculanum");
+            new Color(145, 0, 255), new Color(255, 0, 0), new Color(0, 0, 0), "SansSerif", "SansSerif",
+            "Oswald-Regular", "SansSerif");
 
 
     // Meta
