@@ -28,25 +28,14 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+
+import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -67,6 +56,7 @@ public class App {
     public static boolean useGzipForDownloads = true;
     public static boolean skipMinecraftVersionDownloads = false;
     public static boolean skipTrayIntegration = false;
+    public static boolean useWebLaf = true;
 
     public static Settings settings;
 
@@ -120,6 +110,8 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
+                } else  if(parts[0].equals("--nowlaf")){
+                    useWebLaf = false;
                 }
             }
         }
@@ -266,8 +258,17 @@ public class App {
     }
 
     private static void setLAF() throws Exception {
-        WebLookAndFeel.install();
-        WebLookAndFeel.setDecorateAllWindows(true);
+        if(useWebLaf){
+            WebLookAndFeel.install();
+            WebLookAndFeel.setDecorateAllWindows(true);
+        } else {
+            for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
+                if(info.getName().equalsIgnoreCase("nimbus")){
+                    UIManager.setLookAndFeel(info.getClassName());
+                }
+            }
+        }
+
     }
 
     private static void modifyLAF() throws Exception {
