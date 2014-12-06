@@ -22,7 +22,6 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +68,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         language = new JComboBox<String>(Language.available());
         language.setSelectedItem(Language.current());
         add(language, gbc);
-        
+
+        //Theme
+
 //        gbc.gridx = 0;
 //        gbc.gridy++;
 //        gbc.insets = LABEL_INSETS;

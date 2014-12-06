@@ -1548,8 +1548,8 @@ public class Settings {
                 JSONObject jsonObject = (JSONObject) obj;
                 Collection<String> values = jsonObject.values();
                 for (String string : values) {
-                    this.servers.add(new Server(string, string + "/OpenLauncher/", true, false));
-                    LogManager.warn("Added " + string + "/OpenLauncher/");
+                    this.servers.add(new Server(string, string + "/OpenLauncher", true, false));
+                    LogManager.warn("Added " + string + "/OpenLauncher");
                 }
                 if (values.size() == 0){
                     this.servers.add(new Server("Auto", "www.creeperrepo.net/OpenLauncher", false, false));
