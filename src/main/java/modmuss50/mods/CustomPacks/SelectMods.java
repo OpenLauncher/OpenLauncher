@@ -74,7 +74,6 @@ public class SelectMods extends JDialog {
         ArrayList<IMod> mods = ModSanner.customMods;
         enabledMods = new ArrayList<IModJCheckBox>();
 
-        int dCount = 0;
         int eCount = 0;
         for (IMod mod : mods) {
             IModJCheckBox checkBox = null;

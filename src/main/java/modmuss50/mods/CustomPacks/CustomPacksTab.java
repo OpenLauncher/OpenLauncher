@@ -137,7 +137,7 @@ public class CustomPacksTab extends JPanel implements Tab {
                     return;
                 }
                 try {
-                    text = getText(Constants.API_BASE_URL + "view/raw/" + text);
+                    text = getText(Constants.PASTE_CHECK_URL + "view/raw/" + text);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     return;
@@ -145,7 +145,7 @@ public class CustomPacksTab extends JPanel implements Tab {
                 String[] split = text.split(":");
                 String forgeverson = split[0];
                 String repoVersion = split[1];
-                System.out.println(repoVersion);
+                System.out.println(text);
                 if(!repoVersion.equals(getCurrentRepo().version())){
                     JOptionPane.showMessageDialog(null, "This mod pack was made with an old repo version. Please update the pack to the new version or change the repo version");
                     return;
@@ -219,7 +219,7 @@ public class CustomPacksTab extends JPanel implements Tab {
             UploadPackCode.code = code;
             String result = App.TASKPOOL.submit(new UploadPackCode()).get();
             if (result.contains(Constants.PASTE_CHECK_URL)) {
-                result = result.replace(Constants.API_BASE_URL + "view/", "");
+                result = result.replace(Constants.PASTE_CHECK_URL + "view/", "");
                 App.TOASTER.pop("Code uploaded and link copied to clipboard");
                 LogManager.info("Code uploaded and link copied to clipboard: " + result);
                 StringSelection text = new StringSelection(result);

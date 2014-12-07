@@ -250,7 +250,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean getCustomPack() {
-        return CustomPack;
+        return getPackName().equalsIgnoreCase("custompack");
     }
 
     public void setCustomPack(boolean isCustomPack) {
