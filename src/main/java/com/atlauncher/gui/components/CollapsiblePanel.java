@@ -331,7 +331,7 @@ public class CollapsiblePanel extends JPanel {
             border.paintBorder(c, g, borderR.x, borderR.y, borderR.width, borderR.height);
             Color col = g.getColor();
             g.setColor(c.getBackground());
-            g.fillRect(compR.x, compR.y, compR.width, compR.height);
+            //g.fillRect(compR.x, compR.y, compR.width, compR.height);
             g.setColor(col);
         }
 
