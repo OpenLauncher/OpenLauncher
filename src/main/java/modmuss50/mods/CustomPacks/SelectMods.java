@@ -80,8 +80,10 @@ public class SelectMods extends JDialog {
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.name());
             checkBox = new IModJCheckBox(mod);
             checkBox.setBounds(0, (eCount * 20), nameSize + 23, 20);
-            if (CustomPacksTab.modsToUse.contains(mod)) {
-                checkBox.setSelected(true);
+            for(IMod iMod : CustomPacksTab.modsToUse){
+                if(iMod.id().equals(mod.id())){
+                    checkBox.setSelected(true);
+                }
             }
             enabledMods.add(checkBox);
             eCount++;
