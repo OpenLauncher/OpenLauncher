@@ -57,6 +57,7 @@ public class App {
     public static boolean skipMinecraftVersionDownloads = false;
     public static boolean skipTrayIntegration = false;
     public static boolean useWebLaf = true;
+    public static boolean refreshHashes = true;
 
     public static Settings settings;
 
@@ -112,6 +113,8 @@ public class App {
                     LogManager.debug("Skipping tray integration!", true);
                 } else  if(parts[0].equals("--nowlaf")){
                     useWebLaf = false;
+                }else  if(parts[0].equals("--norefsh")){
+                    refreshHashes = false;
                 }
             }
         }

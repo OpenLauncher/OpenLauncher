@@ -216,9 +216,6 @@ public class Settings {
         checkCreeperRepoEdges();
         loadServerProperty(true); // Get users Server preference
 
-
-        LogManager.warn(this.server.getName());
-
         if(this.server == null){
             this.server = servers.get(0);
             LogManager.warn("Forced to use " + this.server.getName());
@@ -671,6 +668,8 @@ public class Settings {
     }
 
     public void downloadUpdatedFiles() {
+        if(!App.refreshHashes)
+            return;
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads != null) {
             ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
@@ -705,7 +704,7 @@ public class Settings {
      * This checks the servers hashes.json file and looks for new/updated files that differ from what the user has
      */
     public boolean hasUpdatedFiles() {
-        if (isInOfflineMode()) {
+        if (isInOfflineMode() || !App.refreshHashes) {
             return false;
         }
         LogManager.info("Checking for updated files!");
@@ -1549,7 +1548,7 @@ public class Settings {
                 Collection<String> values = jsonObject.values();
                 for (String string : values) {
                     this.servers.add(new Server(string, string + "/OpenLauncher", true, false));
-                    LogManager.warn("Added " + string + "/OpenLauncher");
+                    LogManager.debug("Added " + string + "/OpenLauncher");
                 }
                 if (values.size() == 0){
                     this.servers.add(new Server("Auto", "www.creeperrepo.net/OpenLauncher", false, false));
