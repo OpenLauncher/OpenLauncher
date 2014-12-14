@@ -264,6 +264,7 @@ public class App {
         if(useWebLaf){
             WebLookAndFeel.install();
             WebLookAndFeel.setDecorateAllWindows(true);
+            WebLookAndFeel.setDecorateDialogs(false);
         } else {
             for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
                 if(info.getName().equalsIgnoreCase("nimbus")){
