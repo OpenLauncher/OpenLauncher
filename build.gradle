@@ -84,6 +84,7 @@ jar {
         attributes "Implementation-Vender": "Modmuss50"
         attributes "Created-By": "Gradle " + project.getGradle().getGradleVersion()
     }
+	appendix = 'jar'
 }
 
 shadowJar  {
