@@ -4,7 +4,7 @@ OpenLauncher
 ### What is it?
 OpenLauncher is a fork of the ATLauncher. There will be more info to come soon!
 
-ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
+OpenLauncher is a launcher that allows users to easyily crete their own mod packs and generate a code for that given set of mods.
 
 ### Coding Standards
 
