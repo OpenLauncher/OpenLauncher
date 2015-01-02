@@ -70,7 +70,13 @@ configFile.withReader {
 }
 
 mainClassName = config.mainClass
-version = "${config.version.reserved}.${config.version.major}.${config.version.minor}.${config.version.revision}"
+def ENV = System.getenv()
+if (ENV.BUILD_NUMBER) {
+	version = "${config.version.reserved}.${config.version.major}.${config.version.minor}." + "${System.getenv().BUILD_NUMBER}"
+} else {
+	version = "${config.version.reserved}.${config.version.major}.${config.version.minor}.0"
+}
+
 group = 'com.atlauncher'
 archivesBaseName = 'OpenLauncher'
 sourceCompatibility = '1.6' // tergetCompatibility set by this automatically
@@ -84,16 +90,12 @@ jar {
         attributes "Implementation-Vender": "Modmuss50"
         attributes "Created-By": "Gradle " + project.getGradle().getGradleVersion()
     }
+	appendix = 'jar'
 }
 
-shadowJar  {
-    exclude 'META-INF/*.DSA'
-    exclude 'META-INF/*.RSA'
-    dependencies {
-        exclude(dependency('junit:junit'))
-        exclude(dependency('org.hamcrest:hamcrest-core'))
-    }
-    classifier = ''
+task copyToOutput(type: Copy) {
+    from("${buildDir}/libs/")
+    destinationDir = file("${buildDir}/distributions")
 }
 
 task copyMainJar(type: Copy) {
@@ -105,9 +107,15 @@ task copyMainJar(type: Copy) {
     rename(/(.+)-${version}(.+)/, '$1$2')
 }
 
-task copyToOutput(type: Copy) {
-    from("${buildDir}/libs/")
-    destinationDir = file("${buildDir}/distributions")
+shadowJar  {
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    dependencies {
+        exclude(dependency('junit:junit'))
+        exclude(dependency('org.hamcrest:hamcrest-core'))
+    }
+    classifier = ''
+	appendix = 'jar'
 }
 
 assemble.dependsOn.remove(createDmg)
@@ -123,8 +131,3 @@ artifacts {
     archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
 }
 
-macAppBundle {
-    mainClassName = config.mainClass
-    appName = "UntitledLauncher"
-    icon = "src/main/resources/assets/image/Icon.icns"
-}
