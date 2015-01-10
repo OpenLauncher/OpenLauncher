@@ -1,5 +1,7 @@
 package openlauncher.gui;
 
+import com.atlauncher.gui.tabs.PacksTab;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,8 @@ public class LauncherFrame extends JFrame {
     private GuiTab customPacksTab;
     private String currentTabName;
     private ResourceLoader resources = new ResourceLoader();
+    private JPanel info;
+    private CenterPanel centerPanel;
 
     public LauncherFrame() throws HeadlessException {
         super("OpenLauncher");
@@ -48,7 +52,7 @@ public class LauncherFrame extends JFrame {
         header.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
         this.add(header, BorderLayout.PAGE_START);
 
-        ImageIcon headerIcon = resources.getIcon("assets/image/gui_icon.png");
+        ImageIcon headerIcon = resources.getIcon("assets/image/gui_icon_small.png");
         JButton headerLabel = new JButton(headerIcon);
         headerLabel.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 0));
         headerLabel.setContentAreaFilled(false);
@@ -92,6 +96,22 @@ public class LauncherFrame extends JFrame {
         customPacksTab.addActionListener(tabListener);
         customPacksTab.setActionCommand(TAB_Settings);
         header.add(customPacksTab);
+
+        centerPanel = new CenterPanel();
+        centerPanel.setBackground(new Color(149, 165, 166));
+        centerPanel.setForeground(new Color(236, 240, 241));
+        centerPanel.setTintColor(new Color(52, 73, 94));
+        this.add(centerPanel, BorderLayout.CENTER);
+        centerPanel.setLayout(new BorderLayout());
+
+        info = new JPanel();
+        CardLayout infoLayout = new CardLayout();
+        info.setLayout(infoLayout);
+        info.setOpaque(false);
+        PacksTab newsTab1 = new PacksTab();
+        info.add(newsTab1);
+        centerPanel.add(info, BorderLayout.CENTER);
+
 
     }
 
