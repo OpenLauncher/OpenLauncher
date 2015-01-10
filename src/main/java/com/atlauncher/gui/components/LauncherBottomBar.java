@@ -32,6 +32,7 @@ import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
+import openlauncher.gui.LauncherFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -68,6 +69,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     private JLabel statusIcon;
 
+    protected final JButton newGuiIcon = new JButton("New Gui");
+
     public LauncherBottomBar() {
         submitError.addActionListener(new ActionListener() {
             @Override
@@ -98,8 +101,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         leftSide.add(openFolder, gbc);
         gbc.gridx++;
         leftSide.add(updateData, gbc);
-        // gbc.gridx++;
-        // leftSide.add(submitError, gbc);
+        gbc.gridx++;
+        leftSide.add(newGuiIcon, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -107,7 +110,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         middle.add(username, gbc);
         gbc.gridx++;
         middle.add(statusIcon, gbc);
-
+        
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
@@ -162,6 +165,12 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             @Override
             public void onConsoleOpen() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+            }
+        });
+        newGuiIcon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LauncherFrame launcherFrame = new LauncherFrame();
             }
         });
     }

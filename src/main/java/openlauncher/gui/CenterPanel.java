@@ -7,70 +7,76 @@ import java.awt.*;
  * Created by Mark on 10/01/2015.
  */
 public class CenterPanel extends JPanel {
-    private Color tintColor;
-    private boolean tintActive;
-    private JLabel overIcon = null;
+	private Color tintColor;
+	private boolean tintActive;
+	private JLabel overIcon = null;
 
-    public CenterPanel() {
-        tintColor = new Color(0,0,0,0);
-    }
+	public CenterPanel() {
+		tintColor = new Color(0, 0, 0, 0);
+	}
 
-    public Color getTintColor() { return tintColor; }
-    public void setTintColor(Color color) {
-        this.tintColor = color;
-    }
+	public Color getTintColor() {
+		return tintColor;
+	}
 
-    public void setOverIcon(ImageIcon image) {
-        if (overIcon != null) {
-            remove(overIcon);
-        }
+	public void setTintColor(Color color) {
+		this.tintColor = color;
+	}
 
-        overIcon = new JLabel(image);
-        overIcon.setVisible(false);
-        add(overIcon);
-        revalidate();
-    }
+	public void setOverIcon(ImageIcon image) {
+		if (overIcon != null) {
+			remove(overIcon);
+		}
 
-    public boolean isTintActive() { return tintActive; }
-    public void setTintActive(boolean tintActive) {
-        this.tintActive = tintActive;
+		overIcon = new JLabel(image);
+		overIcon.setVisible(false);
+		add(overIcon);
+		revalidate();
+	}
 
-        if (overIcon != null) {
-            overIcon.setVisible(tintActive);
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    revalidate();
-                }
-            });
-        }
+	public boolean isTintActive() {
+		return tintActive;
+	}
 
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
-    }
+	public void setTintActive(boolean tintActive) {
+		this.tintActive = tintActive;
 
-    @Override
-    public void doLayout() {
-        super.doLayout();
+		if (overIcon != null) {
+			overIcon.setVisible(tintActive);
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					revalidate();
+				}
+			});
+		}
 
-        if (overIcon != null) {
-            int width = overIcon.getIcon().getIconWidth();
-            int height = overIcon.getIcon().getIconHeight();
-            overIcon.setBounds(getWidth() / 2 - width / 2, getHeight() / 2 - height / 2, width, height);
-        }
-    }
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				repaint();
+			}
+		});
+	}
 
-    @Override
-    public void paint(Graphics graphics) {
-        super.paint(graphics);
+	@Override
+	public void doLayout() {
+		super.doLayout();
 
-        if (tintActive) {
-            graphics.setColor(getTintColor());
-            graphics.fillRect(0,0,getWidth(),getHeight());
-        }
-    }
+		if (overIcon != null) {
+			int width = overIcon.getIcon().getIconWidth();
+			int height = overIcon.getIcon().getIconHeight();
+			overIcon.setBounds(getWidth() / 2 - width / 2, getHeight() / 2 - height / 2, width, height);
+		}
+	}
+
+	@Override
+	public void paint(Graphics graphics) {
+		super.paint(graphics);
+
+		if (tintActive) {
+			graphics.setColor(getTintColor());
+			graphics.fillRect(0, 0, getWidth(), getHeight());
+		}
+	}
 }
