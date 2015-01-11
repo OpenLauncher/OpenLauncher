@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class GuiTab extends JLabel implements MouseListener {
+public class GuiTab extends JButton implements MouseListener {
 	private boolean isActive;
 	private DefaultButtonModel model;
 

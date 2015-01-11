@@ -1,6 +1,7 @@
 package openlauncher.gui;
 
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.SettingsTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,6 +123,21 @@ public class LauncherFrame extends JFrame {
 			newsTab.setIsActive(true);
 		} else if (tabName.equalsIgnoreCase(TAB_Settings)) {
 			settingsTab.setIsActive(true);
+
+			centerPanel = new CenterPanel();
+			centerPanel.setBackground(new Color(149, 165, 166));
+			centerPanel.setForeground(new Color(236, 240, 241));
+			centerPanel.setTintColor(new Color(52, 73, 94));
+			this.add(centerPanel, BorderLayout.CENTER);
+			centerPanel.setLayout(new BorderLayout());
+
+			info = new JPanel();
+			CardLayout infoLayout = new CardLayout();
+			info.setLayout(infoLayout);
+			info.setOpaque(false);
+			SettingsTab newsTab1 = new SettingsTab();
+			info.add(newsTab1);
+			centerPanel.add(info, BorderLayout.CENTER);
 		}
 		currentTabName = tabName;
 	}
