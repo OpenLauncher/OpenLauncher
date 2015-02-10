@@ -80,6 +80,7 @@ configFile.withReader {
 }
 
 mainClassName = config.mainClass
+def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
 	version = "${config.version.reserved}.${config.version.major}.${config.version.minor}." + "${System.getenv().BUILD_NUMBER}"
 } else {
