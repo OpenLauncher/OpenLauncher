@@ -24,12 +24,14 @@ public class LauncherFrame extends JFrame {
 	private ResourceLoader resources = new ResourceLoader();
 	private JPanel info;
 	private CenterPanel centerPanel;
+	private CardLayout infoLayout;
 
 	public LauncherFrame() throws HeadlessException {
 		super("OpenLauncher");
 		setSize(new Dimension(1000, 615));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		initComponets();
+
 		setVisible(true);
 	}
 
@@ -60,7 +62,6 @@ public class LauncherFrame extends JFrame {
 
 		packsTab = new GuiTab("Packs", resources);
 		packsTab.setIsActive(true);
-		packsTab.setHorizontalTextPosition(SwingConstants.LEADING);
 		packsTab.addActionListener(tabListener);
 		packsTab.setActionCommand(TAB_Packs);
 		header.add(packsTab);
@@ -100,8 +101,10 @@ public class LauncherFrame extends JFrame {
 		this.add(centerPanel, BorderLayout.CENTER);
 		centerPanel.setLayout(new BorderLayout());
 
+
+
 		info = new JPanel();
-		CardLayout infoLayout = new CardLayout();
+		infoLayout = new CardLayout();
 		info.setLayout(infoLayout);
 		info.setOpaque(false);
 		PacksTab newsTab1 = new PacksTab();
@@ -139,6 +142,8 @@ public class LauncherFrame extends JFrame {
 			info.add(newsTab1);
 			centerPanel.add(info, BorderLayout.CENTER);
 		}
+
+		infoLayout.show(info, tabName);
 		currentTabName = tabName;
 	}
 }

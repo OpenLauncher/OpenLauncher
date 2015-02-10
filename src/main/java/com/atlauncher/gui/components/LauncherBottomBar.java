@@ -110,7 +110,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         middle.add(username, gbc);
         gbc.gridx++;
         middle.add(statusIcon, gbc);
-        
+
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
