@@ -64,7 +64,7 @@ dependencies {
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
-    replace "@BUILD@", ${System.getenv().BUILD_NUMBER}
+    replace "@BUILD@", "${System.getenv().BUILD_NUMBER}"
     replaceIn "build.properties"
 }
 
