@@ -60,13 +60,13 @@ dependencies {
     grabDep('authlib-1.5.17', 'https://libraries.minecraft.net/com/mojang/authlib/1.5.17/authlib-1.5.17.jar')
     grabDep('weblaf-complete-1.28', 'http://weblookandfeel.com/downloads/gpl/weblaf-complete-1.28.jar')
     compile files('dep/weblaf-complete-1.28.jar', 'dep/authlib-1.5.17.jar')
-    def ENV = System.getenv()
-    if (ENV.BUILD_NUMBER) {
-        replace "@BUILD@", "${System.getenv().BUILD_NUMBER}"
-    }
 }
 
-
+def ENV = System.getenv()
+if (ENV.BUILD_NUMBER) {
+    replaceIn "src/main/resources/build.properties"
+    replace "@BUILD@", "${System.getenv().BUILD_NUMBER}"
+}
 
 ext.configFile = file 'src/main/resources/build.properties'
 
@@ -77,7 +77,6 @@ configFile.withReader {
 }
 
 mainClassName = config.mainClass
-def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
 	version = "${config.version.reserved}.${config.version.major}.${config.version.minor}." + "${System.getenv().BUILD_NUMBER}"
 } else {
