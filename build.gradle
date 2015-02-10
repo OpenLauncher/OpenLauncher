@@ -25,6 +25,7 @@ apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'macAppBundle'
+apply plugin: 'maven-publish'
 
 repositories {
 	mavenCentral()
@@ -129,5 +130,47 @@ build.finalizedBy(copyToOutput)
 artifacts {
     archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe"))
     archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:///var/www/maven/")
+            pom {
+                groupId = "OpenLauncher"
+                version = project.version
+                artifactId = project.archivesBaseName
+                project {
+                    name project.archivesBaseName
+                    packaging 'jar'
+                    description 'OpenLauncher'
+                    url 'https://github.com/OpenLauncher/OpenLauncher'
+                    scm {
+                        url 'https://github.com/OpenLauncher/OpenLauncher'
+                        connection 'scm:git:git@github.com:OpenLauncher/OpenLauncher.git'
+                        developerConnection 'scm:git:git@github.com:OpenLauncher/OpenLauncher.git'
+                    }
+                    issueManagement {
+                        system 'github'
+                        url 'https://github.com/OpenLauncher/OpenLauncher/issues'
+                    }
+                    licenses {
+                        license {
+                            name 'License'
+                            url 'https://github.com/OpenLauncher/OpenLauncher/blob/master/LICENSE'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'modmuss50'
+                            name 'modmuss50'
+                            roles { role 'developer' }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
