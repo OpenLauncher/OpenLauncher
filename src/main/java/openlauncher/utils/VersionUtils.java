@@ -18,13 +18,13 @@ public class VersionUtils {
 			try {
 				props.load(propsIn);
 				String version = props.getProperty("version.build");
-				if(version.equals("%build%")){
-					System.out.println("!!The build.properties file has errors!");
+				if(version.equals("@BUILD@")){
+					System.out.println("You have not set the build number in the build.properties. - This can be left in dev env.");
 				}else {
 					int ver = Integer.parseInt(version);
 					if(ver != 0){
 						Constants.VERSION = new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor(), Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), ver);
-						System.out.println("Found custom build number of:"  + ver);
+						System.out.println("Using build number of:"  + ver);
 					}
 				}
 			} catch (IOException e) {
