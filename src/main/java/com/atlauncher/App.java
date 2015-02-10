@@ -28,6 +28,7 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+import openlauncher.utils.VersionUtils;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
@@ -118,6 +119,8 @@ public class App {
                 }
             }
         }
+
+        VersionUtils.loadVersionProperties();
 
         File config = new File(Utils.getCoreGracefully(), "Configs");
         if (!config.exists()) {

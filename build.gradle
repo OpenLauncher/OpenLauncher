@@ -62,7 +62,12 @@ dependencies {
     compile files('dep/weblaf-complete-1.28.jar', 'dep/authlib-1.5.17.jar')
 }
 
-ext.configFile = file 'build.properties'
+if (ENV.BUILD_NUMBER) {
+    replace "@BUILD@", ${System.getenv().BUILD_NUMBER}
+    replaceIn "build.properties"
+}
+
+ext.configFile = file 'src/main/resources/build.properties'
 
 configFile.withReader {
     def prop = new Properties()
