@@ -62,10 +62,12 @@ dependencies {
     compile files('dep/weblaf-complete-1.28.jar', 'dep/authlib-1.5.17.jar')
 }
 
-def ENV = System.getenv()
-if (ENV.BUILD_NUMBER) {
-    replaceIn "src/main/resources/build.properties"
-    replace "@BUILD@", "${System.getenv().BUILD_NUMBER}"
+
+processResources{
+    def ENV = System.getenv()
+    if (ENV.BUILD_NUMBER) {
+        filter(ReplaceTokens, tokens:['@BUILD@': '${System.getenv().BUILD_NUMBER}'])
+    }
 }
 
 ext.configFile = file 'src/main/resources/build.properties'
