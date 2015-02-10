@@ -127,9 +127,6 @@ createApp.dependsOn(copyMainJar)
 copyMainJar.dependsOn(shadowJar)
 build.finalizedBy(copyToOutput)
 
-artifacts {
-    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
-}
 
 uploadArchives {
     repositories {
