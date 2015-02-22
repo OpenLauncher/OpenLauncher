@@ -34,7 +34,7 @@ public final class PasteUpload implements Callable<String> {
     public String call() throws Exception {
         String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
-        urlParameters += "title=" + URLEncoder.encode(Constants.launcherName + " - Log", "ISO-8859-1") + "&";
+        urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "ISO-8859-1") + "&";
         urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
         urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
         urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1") + "&";

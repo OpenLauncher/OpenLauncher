@@ -56,8 +56,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         App.settings.setParentFrame(this);
 
         setSize(new Dimension(1000, 615));
-        setTitle(Constants.launcherName + Constants.VERSION);
-
+        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -90,9 +89,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         });
     }
 
-
-    public void updateTitle(String str){
-        setTitle(Constants.launcherName + Constants.VERSION + " - " + str);
+    public void updateTitle(String str) {
+        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION + " - " + str);
     }
 
     /**

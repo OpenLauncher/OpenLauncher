@@ -22,6 +22,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Action;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
@@ -756,8 +757,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasRecommendedMods() {
         for (Mod mod : allMods) {
-            if (!mod.isRecommeneded()) {
-                return true; // One of the mods is marked as not recommended, so return true
+            if (mod.isRecommeneded()) {
+                return true; // One of the mods is marked as recommended, so return true
             }
         }
         return false; // No non recommended mods found
@@ -765,8 +766,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasJsonRecommendedMods() {
         for (com.atlauncher.data.json.Mod mod : allJsonMods) {
-            if (!mod.isRecommended()) {
-                return true; // One of the mods is marked as not recommended, so return true
+            if (mod.isRecommended()) {
+                return true; // One of the mods is marked as recommended, so return true
             }
         }
         return false; // No non recommended mods found
@@ -2130,10 +2131,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return installUsingJSON();
             } catch (JsonSyntaxException e) {
                 App.settings.logStackTrace("Couldn't read JSON of pack! Report this to the pack's developer/s and " +
-                        "NOT ATLauncher!", e);
+                        "NOT " + Constants.LAUNCHER_NAME + "!", e);
             } catch (JsonParseException e) {
                 App.settings.logStackTrace("Couldn't parse JSON of pack! Report this to the pack's developer/s and "
-                        + "NOT ATLauncher!", e);
+                        + "NOT " + Constants.LAUNCHER_NAME + "!", e);
             }
         }
         return installUsingXML();

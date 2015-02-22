@@ -35,7 +35,7 @@ public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
     private final BlockingQueue<LogEvent> queue;
     private static final String date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-    public static final String filename = Constants.launcherName + "_" + date + ".log";
+    public static final String filename = Constants.LAUNCHER_NAME + "-Log_" + date + ".log";
 
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;

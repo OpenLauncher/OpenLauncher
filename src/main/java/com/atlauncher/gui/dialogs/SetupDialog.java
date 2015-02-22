@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
@@ -55,7 +56,7 @@ public class SetupDialog extends JDialog {
     private JButton saveButton;
 
     public SetupDialog() {
-        super(null, "ATLauncher Setup", ModalityType.APPLICATION_MODAL);
+        super(null, Constants.LAUNCHER_NAME + " Setup", ModalityType.APPLICATION_MODAL);
         this.requestFocus();
         this.setSize(400, 200);
         setLocationRelativeTo(null);
@@ -66,7 +67,7 @@ public class SetupDialog extends JDialog {
 
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel("Setting up ATLauncher"));
+        top.add(new JLabel("Setting up " + Constants.LAUNCHER_NAME));
 
         // Middle Panel Stuff
         middle = new JPanel();

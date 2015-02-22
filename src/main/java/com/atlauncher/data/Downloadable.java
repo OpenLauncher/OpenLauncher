@@ -110,7 +110,7 @@ public class Downloadable {
         etag = getConnection().getHeaderField("ETag");
 
         if (etag == null) {
-            etag = getConnection().getHeaderField("ATLauncher-MD5");
+            etag = getConnection().getHeaderField(Constants.LAUNCHER_NAME + "-MD5");
         }
 
         if (etag == null) {
@@ -240,7 +240,7 @@ public class Downloadable {
                         this.connection = null;
                         return getConnection();
                     } else {
-                        LogManager.error("Failed to download " + this.beforeURL + " from all ATLauncher servers. " +
+                        LogManager.error("Failed to download " + this.beforeURL + " from all " + Constants.LAUNCHER_NAME + " servers. " +
                                 "Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
@@ -414,7 +414,7 @@ public class Downloadable {
                         download(downloadAsLibrary); // Redownload the file
                     } else {
                         Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
-                        LogManager.error("Failed to download file " + this.file.getName() + " from all ATLauncher " +
+                        LogManager.error("Failed to download file " + this.file.getName() + " from all " + Constants.LAUNCHER_NAME +
                                 "servers. Copied to FailedDownloads Folder. Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);

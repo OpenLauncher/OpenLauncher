@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class DropboxSync extends SyncAbstract {
     private File dropboxLocation = null;
-    private String backupFolder = "ATLauncherBackup";
+    private String backupFolder = Constants.LAUNCHER_NAME + "Backup";
 
     public DropboxSync() {
         super("Dropbox");

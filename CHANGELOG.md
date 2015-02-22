@@ -18,3 +18,11 @@ Changelog
 - Add in build versioning for beta testing
 - Switch to Mojang's official AuthLib for authentication
 - Don't delete symlinks
+- Fix issues with dev versions with updates not being able to play until updated
+- You can now ignore dev version updates as you can non dev versions
+- When adding mods to a pack via the Edit Mods button, the default type is now Mods Folder
+- Add in Share Codes to share a pack's optional mod configuration with others. Get it from right clicking an instances image and apply it to a instance when on the optional mods selection screen
+- Disable the update item in the instances right click menu if there is no update
+- Fixed network checker
+- Removed Java 8 warning
+- The Select All button will now show Select Recommended whenever there is ANY mod which is marked as recommended

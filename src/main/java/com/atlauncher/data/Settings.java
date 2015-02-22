@@ -208,7 +208,7 @@ public class Settings {
         instancesDataFile = new File(configsDir, "instancesdata");
         checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, Constants.launcherName + ".conf");
+        propertiesFile = new File(configsDir, Constants.LAUNCHER_NAME + ".conf");
     }
 
     public void loadEverything() {
@@ -308,24 +308,6 @@ public class Settings {
             }
         }
 
-        if (Utils.isJava8() && !this.hideJava8Warning) {
-            LogManager.warn("You're using a possible game breaking version of Java (Java 8)!");
-            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
-                    ".ok"), Language.INSTANCE.localize("instance" + "" +
-                    ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.java8warning", "<br/><br/>") + "</p></html>", Language
-                    .INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
-            if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java7download");
-                System.exit(0);
-            } else if (ret == 2) {
-                this.hideJava8Warning = true;
-                this.saveProperties();
-            }
-        }
-
         if (this.advancedBackup) {
             dropbox = new DropboxSync();
         }
@@ -390,9 +372,9 @@ public class Settings {
     public void clearOldLogs() {
         LogManager.debug("Clearing out old logs");
 
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
 
         if (logFile3.exists()) {
             Utils.delete(logFile3);
@@ -416,7 +398,7 @@ public class Settings {
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
             try {
                 Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
-                        ("ATLauncher-Log_", "").replace(".log", ""));
+                        (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
 
                 if (date.before(toDeleteAfter)) {
                     Utils.delete(file);
@@ -431,9 +413,9 @@ public class Settings {
     }
 
     public void clearAllLogs() {
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
 
         if (logFile3.exists()) {
             Utils.delete(logFile3);
@@ -579,7 +561,7 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable(Constants.launcherName + "." + toget, newFile, null, null, true);
+            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + toget, newFile, null, null, true);
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
@@ -761,11 +743,11 @@ public class Settings {
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
                                 "page" +
-                                ".<br/><br/>Download " + "the update and replace the old " + Constants.launcherName + " file" +
+                                ".<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " file" +
                                 ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
-                    Utils.openBrowser("http://rushmead.playat.ch/" + Constants.launcherName +".jar");
+                    Utils.openBrowser("http://www.creeperrepo.net/OpenLauncher/" + Constants.LAUNCHER_NAME +".jar");
                     System.exit(0);
                 }
             }
@@ -1129,7 +1111,7 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            this.theme = properties.getProperty("theme", Constants.launcherName);
+            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
@@ -1364,8 +1346,6 @@ public class Settings {
                 this.concurrentConnections = 8;
             }
 
-            this.theme = properties.getProperty("theme", Constants.launcherName);
-
             this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
             if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
                 // Days of logs to keep should be 1 or more but less than 30
@@ -1455,7 +1435,7 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
-            this.properties.store(new FileOutputStream(propertiesFile), Constants.launcherName + " Settings");
+            this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -3029,7 +3009,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + Constants.launcherName + " /" + Constants.VERSION;
+        return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
     }
 
     /**

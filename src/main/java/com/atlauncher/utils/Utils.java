@@ -170,7 +170,7 @@ public class Utils {
                         .getSchemeSpecificPart()).getParentFile();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-                return new File(System.getProperty("user.dir"), "ATLauncher");
+                return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
             }
         } else {
             return new File(System.getProperty("user.dir"));
@@ -932,8 +932,10 @@ public class Utils {
             return;
         }
         if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
-                delete(c);
+            if (file.listFiles() != null) {
+                for (File c : file.listFiles()) {
+                    delete(c);
+                }
             }
         }
 
@@ -1378,7 +1380,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                return file.isFile() && name.startsWith("ATLauncher-Log_") && name.endsWith(".log");
+                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
             }
         };
     }
@@ -1542,8 +1544,8 @@ public class Utils {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
         }
     }
-    
-     /**
+
+    /**
      * Checks if is java9.
      *
      * @return true, if is java9
