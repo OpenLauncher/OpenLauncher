@@ -8,7 +8,6 @@
 !/gradle/
 !/.gitignore
 !/LICENSE
-!/README.md
 !/pom.xml
 !/IntelliJ-Coding-Style.xml
 !/UntitledLauncher.iml
@@ -16,5 +15,7 @@
 !/gradlew*
 !/build.gradle
 !/build.properties
+!/README.md
+!/STYLE.md
 !/CHANGELOG.md
 !/build.bat

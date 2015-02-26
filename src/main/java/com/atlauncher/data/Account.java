@@ -26,6 +26,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import com.mojang.util.UUIDTypeAdapter;
@@ -475,8 +476,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -592,6 +593,7 @@ public class Account implements Serializable {
         App.settings.saveAccounts();
     }
 
+    // TODO: Change to use Mojang authlib
     public LoginResponse login() {
         LoginResponse response = null;
 
@@ -633,10 +635,10 @@ public class Account implements Serializable {
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
             String[] options = {Language.INSTANCE.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language.INSTANCE
-                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage()) +
-                    "</p></html>", Language.INSTANCE.localize("instance.errorloggingintitle"), JOptionPane
-                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
+                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
+                    Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return null;
         }

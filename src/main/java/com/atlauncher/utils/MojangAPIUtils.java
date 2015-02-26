@@ -15,25 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.atlauncher.reporter;
+package com.atlauncher.utils;
 
 import com.atlauncher.Gsons;
+import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.mojang.api.ProfileResponse;
 
-@SuppressWarnings("unused")
-public final class GithubIssue {
-    private final String title;
-    private final String body;
-    private final String[] labels;
+/**
+ * Various utility methods for interacting with the Mojang API.
+ */
+public class MojangAPIUtils {
+    /**
+     * Gets a UUID of a Minecraft account from a given username.
+     *
+     * @param username the username to get the UUID for
+     * @return the UUID for the username given
+     */
+    public static String getUUID(String username) {
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
+                false);
 
-    public GithubIssue(String title, String body) {
-        this.title = title;
-        this.body = body;
-        this.labels = new String[]{"Bug(s)"};
-    }
+        ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
 
-    @Override
-    public String toString() {
-        return Gsons.DEFAULT.toJson(this);
+        return profile.getId();
     }
 }

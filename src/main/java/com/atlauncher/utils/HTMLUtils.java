@@ -15,25 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.utils;
 
-package com.atlauncher.reporter;
-
-import com.atlauncher.Gsons;
-
-@SuppressWarnings("unused")
-public final class GithubIssue {
-    private final String title;
-    private final String body;
-    private final String[] labels;
-
-    public GithubIssue(String title, String body) {
-        this.title = title;
-        this.body = body;
-        this.labels = new String[]{"Bug(s)"};
-    }
-
-    @Override
-    public String toString() {
-        return Gsons.DEFAULT.toJson(this);
+/**
+ * Creates some basic helpers for HTML displays on things.
+ */
+public class HTMLUtils {
+    /**
+     * Creates a basic centered paragraph.
+     *
+     * @param text the text to be centered in a paragraph
+     * @return the HTML for the text that's been centered and paragraphed
+     */
+    public static String centerParagraph(String text) {
+        return "<html><p align=\"center\">" + text + "</p></html>";
     }
 }

@@ -21,11 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
-import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.json.LauncherLibrary;
-import com.atlauncher.data.mojang.DateTypeAdapter;
-import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
-import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -35,11 +31,10 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -47,9 +42,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.io.*;
@@ -62,7 +60,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -76,18 +73,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Settings class for storing all data for the Launcher and the settings of the user
+ * Settings class for storing all data for the Launcher and the settings of the user.
  *
  * @author Ryan
  */
 //Setting the server line 200
 public class Settings {
-    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
-            EnumTypeAdapterFactory()).registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File
-            .class, new FileTypeAdapter()).create();
-    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
-            ColorTypeAdapter()).create();
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
@@ -280,10 +271,10 @@ public class Settings {
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>") + "</p></html>", Language
-                    .INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
@@ -295,9 +286,9 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
                     ".ok"), Language.INSTANCE.localize("instance" + "" +
                     ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>") + "</p></html>", Language
-                    .INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")), Language.INSTANCE
+                    .localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
                     .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://atl.pw/java7download");
@@ -353,10 +344,10 @@ public class Settings {
         if (matches) {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>") + "</p></html>", Language
-                    .INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
+                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
                     if (account.isRemembered()) {
@@ -397,8 +388,8 @@ public class Settings {
 
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
             try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
-                        (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
+                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace(Constants
+                        .LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
 
                 if (date.before(toDeleteAfter)) {
                     Utils.delete(file);
@@ -475,7 +466,7 @@ public class Settings {
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
-                account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
+                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
         }
@@ -526,8 +517,8 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir, "version.json")),
-                    LauncherVersion.class);
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")
+            ), LauncherVersion.class);
         } catch (JsonSyntaxException e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         } catch (JsonIOException e) {
@@ -535,10 +526,8 @@ public class Settings {
         } catch (FileNotFoundException e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         }
-        if (this.latestLauncherVersion == null) {
-            return false;
-        }
-        return Constants.VERSION.needsUpdate(this.latestLauncherVersion);
+
+        return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
     public boolean launcherHasBetaUpdate() {
@@ -625,7 +614,15 @@ public class Settings {
         Downloadable download = new Downloadable("launcher/json/hashes.json", true);
         java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
         }.getType();
-        this.launcherFiles = gson.fromJson(download.getContents(), type);
+
+        String contents = download.getContents();
+
+        try {
+            this.launcherFiles = Gsons.DEFAULT.fromJson(contents, type);
+        } catch (Exception e) {
+            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
+            this.logStackTrace("Error loading in file hashes! See error details at " + result, e);
+        }
     }
 
     /**
@@ -740,16 +737,13 @@ public class Settings {
                 downloadUpdate(); // Update the Launcher
             } else {
                 String[] options = {"Ok"};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page" +
-                                ".<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " file" +
-                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if (ret == 0) {
-                    Utils.openBrowser("http://www.creeperrepo.net/OpenLauncher/" + Constants.LAUNCHER_NAME +".jar");
-                    System.exit(0);
-                }
+                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
+                                "Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file."),
+                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
+                Utils.openBrowser("http://www.creeperrepo.net/OpenLauncher/");
+                System.exit(0);
             }
         } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {
             downloadBetaUpdate();
@@ -757,6 +751,10 @@ public class Settings {
         LogManager.debug("Finished checking for launcher update");
     }
 
+    /**
+     * Downloads and loads all external libraries used by the launcher as specified in the Configs/JSON/libraries.json
+     * file.
+     */
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
 
@@ -1101,15 +1099,12 @@ public class Settings {
             }
         } catch (IOException e) {
             String[] options = {"OK"};
-            JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the config file" +
-                            ".<br/><br/>Make sure" + " you are running the Launcher from somewhere with<br/>write" +
-                            " " +
-                            "permissions for your user account such as your Home/Users folder" + " or desktop" +
-                            ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                    options, options[0]);
-            System.exit(0);
-        }
-        try {
+            JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("Cannot create the config file" +
+                            ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write" +
+                            " permissions for your user account such as your Home/Users folder or desktop."),
+                    "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    System.exit(0);
+        } try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
@@ -1503,9 +1498,10 @@ public class Settings {
 
         if (response != null) {
             try {
-                this.servers = gson.fromJson(response, type);
+                this.servers = Gsons.DEFAULT.fromJson(response, type);
             } catch (Exception e) {
-                logStackTrace("Exception when reading in the servers", e);
+                String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", response);
+                logStackTrace("Exception when reading in the servers. See error details at " + result, e);
                 this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
             }
         }
@@ -1581,7 +1577,7 @@ public class Settings {
             File fileDir = new File(getJSONDir(), "news.json");
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
 
-            this.news = gson.fromJson(in, type);
+            this.news = Gsons.DEFAULT.fromJson(in, type);
             in.close();
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
@@ -1607,7 +1603,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            list = gson.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+            list = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1652,7 +1648,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            this.packs = gson.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
+            this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1673,7 +1669,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers = gson.fromJson(download.getContents(), type);
+            packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1737,22 +1733,30 @@ public class Settings {
             for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
                 File instanceDir = new File(this.getInstancesDir(), folder);
                 FileReader fileReader;
+
+                Instance instance = null;
+
                 try {
                     fileReader = new FileReader(new File(instanceDir, "instance.json"));
-                } catch (FileNotFoundException e) {
-                    logStackTrace(e);
+                    instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
+                } catch (Exception e) {
+                    logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue; // Instance.json not found for some reason, continue before loading
                 }
-                Instance instance = Settings.gson.fromJson(fileReader, Instance.class);
+
                 if (instance == null) {
+                    LogManager.error("Failed to load instance in the folder " + instanceDir);
                     continue;
                 }
+
                 if (!instance.getDisabledModsDirectory().exists()) {
                     instance.getDisabledModsDirectory().mkdir();
                 }
+
                 if (isPackByName(instance.getPackName())) {
                     instance.setRealPack(getPackByName(instance.getPackName()));
                 }
+
                 this.instances.add(instance);
             }
             if (instancesDataFile.exists()) {
@@ -1774,7 +1778,7 @@ public class Settings {
 
                 fw = new FileWriter(instanceFile);
                 bw = new BufferedWriter(fw);
-                bw.write(Settings.gson.toJson(instance));
+                bw.write(Gsons.DEFAULT.toJson(instance));
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             } finally {
@@ -1883,7 +1887,7 @@ public class Settings {
                 return;
             }
 
-            this.checkingServers = gson.fromJson(fileReader, MinecraftServer.LIST_TYPE);
+            this.checkingServers = Gsons.DEFAULT.fromJson(fileReader, MinecraftServer.LIST_TYPE);
 
             if (fileReader != null) {
                 try {
@@ -1907,7 +1911,7 @@ public class Settings {
 
             fw = new FileWriter(checkingServersFile);
             bw = new BufferedWriter(fw);
-            bw.write(Settings.gson.toJson(this.checkingServers));
+            bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         } finally {
