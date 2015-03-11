@@ -58,9 +58,9 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.3.2'
     compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
     compile 'org.apache.logging.log4j:log4j-core:2.0-beta9'
-    grabDep('authlib-1.5.17', 'https://libraries.minecraft.net/com/mojang/authlib/1.5.17/authlib-1.5.17.jar')
+    grabDep('authlib-1.5.19', 'https://libraries.minecraft.net/com/mojang/authlib/1.5.9/authlib-1.5.19.jar')
     grabDep('weblaf-complete-1.28', 'http://weblookandfeel.com/downloads/gpl/weblaf-complete-1.28.jar')
-    compile files('dep/weblaf-complete-1.28.jar', 'dep/authlib-1.5.17.jar')
+    compile files('dep/weblaf-complete-1.28.jar', 'dep/authlib-1.5.19.jar')
 }
 
 
