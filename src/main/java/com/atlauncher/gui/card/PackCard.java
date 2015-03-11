@@ -29,7 +29,9 @@ import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,10 +47,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
     private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
     private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
+    private final JButton removePackButton = new JButton(Language.INSTANCE.localize("pack.removepack"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JLabel packName = new JLabel();
     private final JSplitPane splitter = new JSplitPane();
-    private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
 
     public PackCard(final Pack pack) {
@@ -60,15 +62,17 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 
-        JPanel abPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        packName.setText(pack.getName());
-        Font boldFont = new Font(packName.getFont().getFontName(), Font.BOLD, packName.getFont().getSize());
-        packName.setFont(boldFont);
-        abPanel.add(packName);
-        abPanel.add(this.newInstanceButton);
-        abPanel.add(this.createServerButton);
-        abPanel.add(this.websiteButton);
-        abPanel.add(this.modsButton);
+        JPanel top = new JPanel(new FlowLayout());
+        JPanel bottom = new JPanel(new FlowLayout());
+        JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        as.setEnabled(false);
+        as.setTopComponent(top);
+        as.setBottomComponent(bottom);
+        top.add(this.newInstanceButton);
+        top.add(this.createServerButton);
+        bottom.add(this.websiteButton);
+        bottom.add(this.modsButton);
+        bottom.add(this.removePackButton);
 
         this.descArea.setText(pack.getDescription());
         this.descArea.setLineWrap(true);
@@ -78,7 +82,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
                 .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.actionsPanel.add(abPanel, BorderLayout.SOUTH);
+        this.actionsPanel.add(as, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
         this.getContentPane().add(this.splitter);
@@ -91,6 +95,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         if (!this.pack.canCreateServer()) {
             this.createServerButton.setVisible(false);
+        }
+
+        if (!this.pack.isSemiPublic() || this.pack.isTester()) {
+            this.removePackButton.setVisible(false);
         }
     }
 
@@ -105,13 +113,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                                    ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                            ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
@@ -131,7 +139,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);
@@ -152,6 +160,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 new ViewModsDialog(pack).setVisible(true);
             }
         });
+
+        this.removePackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                App.settings.removePack(pack.getCode());
+            }
+        });
     }
 
     @Override
@@ -160,5 +175,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
         this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
         this.modsButton.setText(Language.INSTANCE.localize("pack.viewmods"));
+        this.removePackButton.setText(Language.INSTANCE.localize("pack.removepack"));
     }
 }

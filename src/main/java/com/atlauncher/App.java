@@ -20,6 +20,7 @@ package com.atlauncher;
 import com.alee.laf.WebLookAndFeel;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
@@ -99,6 +100,10 @@ public class App {
     public static boolean useWebLaf = true;
     public static boolean refreshHashes = true;
 
+    /**
+     * This sets a pack code to be added to the launcher on startup.
+     */
+    public static String packCodeToAdd = null;
 
     public static String autoLaunch = null;
 
@@ -238,6 +243,8 @@ public class App {
 
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
+
+            settings.checkForValidJavaPath(false);
         } else if (settings.isUsingMacApp()) {
             // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
 
@@ -301,6 +308,20 @@ public class App {
         TRAY_MENU.localize();
         integrate();
         ss.close();
+
+        if (packCodeToAdd != null) {
+            if (settings.addPack(packCodeToAdd)) {
+                Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
+                if (packAdded != null) {
+                    LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
+                } else {
+                    LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+                }
+            } else {
+                LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+            }
+        }
+
         new LauncherFrame(open); // Open the Launcher
     }
 
@@ -415,13 +436,29 @@ public class App {
      */
     public static void integrate() {
         try {
-            File f = new File(new File(System.getProperty("user.home")), ".atl.properties");
+            if (!Utils.getOSStorageDir().exists()) {
+                Utils.getOSStorageDir().mkdirs();
+            }
+
+            File f = new File(Utils.getOSStorageDir(), "atlauncher.conf");
+
             if (!f.exists()) {
                 f.createNewFile();
             }
+
             Properties props = new Properties();
             props.load(new FileInputStream(f));
-            props.setProperty("atl_loc", App.settings.getBaseDir().toString());
+
+            props.setProperty("java_version", Utils.getJavaVersion());
+            props.setProperty("location", App.settings.getBaseDir().toString());
+            props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
+                    .getPath()).getAbsolutePath());
+
+            if (props.getProperty("pack_code_to_add", null) != null) {
+                packCodeToAdd = props.getProperty("pack_code_to_add");
+                props.remove("pack_code_to_add");
+            }
+
             props.store(new FileOutputStream(f), "");
         } catch (IOException e) {
             e.printStackTrace();
