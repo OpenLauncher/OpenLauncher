@@ -80,6 +80,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private PackVersion version;
     private boolean isReinstall;
     private boolean isServer;
+    private final String shareCode;
+    private final boolean showModsChooser;
     private String jarOrder;
     private boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
@@ -108,12 +110,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private List<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean
-            isServer) {
+            isServer, String shareCode, boolean showModsChooser) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        this.shareCode = shareCode;
+        this.showModsChooser = showModsChooser;
         if (isServer) {
             serverLibraries = new ArrayList<File>();
         }
@@ -1183,7 +1187,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.allMods.size() != 0 && hasOptional) {
             ModsChooser modsChooser = new ModsChooser(this);
-            modsChooser.setVisible(true);
+
+            if (this.shareCode != null) {
+                modsChooser.applyShareCode(shareCode);
+            }
+
+            if (this.showModsChooser) {
+                modsChooser.setVisible(true);
+            }
+
             if (modsChooser.wasClosed()) {
                 this.cancel(true);
                 return false;
@@ -1494,5 +1506,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             fireSubProgress((int) progress, String.format("%.2f MB / %.2f MB", done, toDo));
         }
+    }
+
+    public String getShareCodeData(String code) {
+        String shareCodeData = null;
+
+        try {
+            APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall("pack/" + this.pack.getSafeName() + "/" +
+                    version.getVersion() + "/share-code/" + code), APIResponse.class);
+
+            if (!response.wasError()) {
+                shareCodeData = response.getDataAsString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return shareCodeData;
     }
 }

@@ -72,16 +72,28 @@ public class InstanceInstallerDialog extends JDialog {
     private JCheckBox installForMe;
     private boolean isCustomPack = false;
 
+    private PackVersion autoInstallVersion;
+    private String shareCode;
+
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false);
+        this(object, false, false, null, null, true);
+    }
+
+    public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
+        this(pack, false, false, version, shareCode, showModsChooser);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this((Object) pack, false, true);
+        this((Object) pack, false, true, null, null, true);
     }
 
-    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer) {
+    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, final PackVersion
+            autoInstallVersion, final String shareCode, final boolean showModsChooser) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.autoInstallVersion = autoInstallVersion;
+        this.shareCode = shareCode;
+
         if (object instanceof Pack) {
             pack = (Pack) object;
             setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName());
@@ -177,6 +189,11 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
+        if (autoInstallVersion != null) {
+            versionsDropDown.setSelectedItem(autoInstallVersion);
+            versionsDropDown.setEnabled(false);
+        }
+
         if (!this.isServer) {
             if (!isReinstall) {
                 gbc.gridx = 0;
@@ -204,8 +221,8 @@ public class InstanceInstallerDialog extends JDialog {
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
                         int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localize("common.error") +
-                                "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
+                                        "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
                                 .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
@@ -262,7 +279,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? "" : instanceNameField
-                        .getText()), pack, version, isReinstall, isServer) {
+                        .getText()), pack, version, isReinstall, isServer, shareCode, showModsChooser) {
 
                     protected void done() {
                         Boolean success = false;

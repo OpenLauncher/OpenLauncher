@@ -23,10 +23,10 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
-import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
+import io.github.asyncronous.toast.Toaster;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -44,6 +44,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
@@ -363,13 +364,29 @@ public class ModsChooser extends JDialog {
         return width;
     }
 
-    private void applyShareCode(String code) {
+    public void applyShareCode(String code) {
         try {
-            java.lang.reflect.Type type = new TypeToken<List<String>>() {
+            String data = installer.getShareCodeData(code);
+
+            if (data == null) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+                return;
+            }
+
+            java.lang.reflect.Type type = new TypeToken<Map<String, List<Map<String, String>>>>() {
             }.getType();
-            List<String> optionalMods = Gsons.DEFAULT.fromJson(new String(Base64.decode(code)), type);
+
+            Map<String, List<Map<String, String>>> mods = Gsons.DEFAULT.fromJson(data, type);
+
+            if (mods == null) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+                return;
+            }
+
+            List<Map<String, String>> optionalMods = mods.get("optional");
 
             if (optionalMods == null || optionalMods.size() == 0) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
                 return;
             }
 
@@ -380,8 +397,8 @@ public class ModsChooser extends JDialog {
 
                 boolean found = false;
 
-                for (String mod : optionalMods) {
-                    if (mod.equalsIgnoreCase(checkbox.getMod().getName())) {
+                for (Map<String, String> mod : optionalMods) {
+                    if (mod.get("name").equalsIgnoreCase(checkbox.getMod().getName())) {
                         found = true;
                         break;
                     }
@@ -393,6 +410,7 @@ public class ModsChooser extends JDialog {
             }
         } catch (Exception e) {
             LogManager.error("Invalid share code!");
+            Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
         }
     }
 

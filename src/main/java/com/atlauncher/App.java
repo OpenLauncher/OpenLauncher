@@ -103,7 +103,17 @@ public class App {
     /**
      * This sets a pack code to be added to the launcher on startup.
      */
-    public static String packCodeToAdd = null;
+    public static String packCodeToAdd;
+
+    /**
+     * This sets a pack to install on startup (no share code so just prompt).
+     */
+    public static String packToInstall;
+
+    /**
+     * This sets a pack to install on startup (with share code).
+     */
+    public static String packShareCodeToInstall;
 
     public static String autoLaunch = null;
 
@@ -454,10 +464,14 @@ public class App {
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
 
-            if (props.getProperty("pack_code_to_add", null) != null) {
-                packCodeToAdd = props.getProperty("pack_code_to_add");
-                props.remove("pack_code_to_add");
-            }
+            packCodeToAdd = props.getProperty("pack_code_to_add", null);
+            props.remove("pack_code_to_add");
+
+            packToInstall = props.getProperty("pack_to_install", null);
+            props.remove("pack_to_install");
+
+            packShareCodeToInstall = props.getProperty("pack_share_code_to_install", null);
+            props.remove("pack_share_code_to_install");
 
             props.store(new FileOutputStream(f), "");
         } catch (IOException e) {
