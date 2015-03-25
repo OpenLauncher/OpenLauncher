@@ -503,7 +503,7 @@ public class InstanceInstallerDialog extends JDialog {
         setVisible(true);
     }
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, String version) {
-        this(object, isUpdate, isServer);
+        this(object, isUpdate, isServer, null, null, true);
         versionsDropDown.setSelectedItem(version);
     }
 
