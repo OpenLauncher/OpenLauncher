@@ -101,6 +101,13 @@ public class App {
     public static boolean refreshHashes = true;
 
     /**
+     * This forces the launcher to start in offline mode. It can be enabled with the below command line argument.
+     * <p/>
+     * --force-offline-mode
+     */
+    public static boolean forceOfflineMode = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
     public static String packCodeToAdd;
@@ -197,6 +204,9 @@ public class App {
                     useWebLaf = false;
                 }else  if(parts[0].equals("--norefsh")){
                     refreshHashes = false;
+                } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
+                    forceOfflineMode = true;
+                    LogManager.debug("Forcing offline mode!", true);
                 }
             }
         }
@@ -247,7 +257,7 @@ public class App {
             }
         }
 
-        LogManager.info("ATLauncher Version: " + Constants.VERSION);
+        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
 
@@ -433,7 +443,7 @@ public class App {
                     }
                 }
             });
-            trayIcon.setToolTip("ATLauncher");
+            trayIcon.setToolTip(Constants.LAUNCHER_NAME);
             trayIcon.setImageAutoSize(true);
 
             tray.add(trayIcon);

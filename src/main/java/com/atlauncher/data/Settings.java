@@ -203,6 +203,10 @@ public class Settings {
     }
 
     public void loadEverything() {
+        if (App.forceOfflineMode) {
+            this.offlineMode = true;
+        }
+
         setupServers(); // Setup the servers available to use in the Launcher
         checkCreeperRepoEdges();
         loadServerProperty(true); // Get users Server preference
@@ -254,6 +258,10 @@ public class Settings {
         checkResources(); // Check for new format of resources
 
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+
+        changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
+
+        checkAccountsForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
         OUTER:
@@ -314,6 +322,24 @@ public class Settings {
         if (this.enableServerChecker) {
             this.startCheckingServers();
         }
+    }
+
+    private void checkAccountsForNameChanges() {
+        LogManager.info("Checking For Username Changes");
+
+        boolean somethingChanged = false;
+
+        for (Account account : this.accounts) {
+            if (account.checkForUsernameChange()) {
+                somethingChanged = true;
+            }
+        }
+
+        if (somethingChanged) {
+            this.saveAccounts();
+        }
+
+        LogManager.info("Checking For Username Changes Complete");
     }
 
     public void checkForValidJavaPath(boolean save) {
@@ -483,12 +509,55 @@ public class Settings {
         LogManager.debug("Checking account UUID's");
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
-            if (account.getUUID() == null) {
+            if (account.isUUIDNull()) {
                 account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
         }
         LogManager.debug("Finished checking account UUID's");
+    }
+
+    public void changeInstanceUserLocks() {
+        LogManager.debug("Changing instances user locks to UUID's");
+
+        boolean wereChanges = false;
+
+        for (Instance instance : this.instances) {
+            if (instance.getInstalledBy() != null) {
+                boolean found = false;
+
+                for (Account account : this.accounts) {
+                    // This is the user who installed this so switch to their UUID
+                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
+                        found = true;
+                        wereChanges = true;
+
+                        instance.removeInstalledBy();
+
+                        // If the accounts UUID is null for whatever reason, don't set the lock
+                        if (!account.isUUIDNull()) {
+                            instance.setUserLock(account.getUUIDNoDashes());
+                        }
+                        break;
+                    }
+                }
+
+                // If there were no accounts with that username, we remove the lock and old installed by
+                if (!found) {
+                    wereChanges = true;
+
+                    instance.removeInstalledBy();
+                    instance.removeUserLock();
+                }
+            }
+        }
+
+        if (wereChanges) {
+            this.saveAccounts();
+            this.saveInstances();
+        }
+
+        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {
@@ -757,7 +826,8 @@ public class Settings {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
                                 "Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file."),
+                                "page.<br/><br/>Download " + "the update and replace the old " + Constants
+                                .LAUNCHER_NAME + " file."),
                         "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 Utils.openBrowser("http://www.creeperrepo.net/OpenLauncher/");
@@ -2144,7 +2214,7 @@ public class Settings {
                     }
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
-                    this.reloadInstancesPanel();
+                    this.refreshPacksPanel();
                     return true;
                 }
             }
@@ -2157,7 +2227,7 @@ public class Settings {
             if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
-                this.reloadPacksPanel();
+                this.refreshPacksPanel();
             }
         }
     }
@@ -2319,6 +2389,13 @@ public class Settings {
      */
     public void reloadPacksPanel() {
         this.packsPanel.reload(); // Reload the instances panel
+    }
+
+    /**
+     * Refreshes the panel used for Packs
+     */
+    public void refreshPacksPanel() {
+        this.packsPanel.refresh(); // Refresh the instances panel
     }
 
     /**

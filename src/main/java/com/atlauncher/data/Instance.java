@@ -67,6 +67,11 @@ public class Instance implements Cloneable {
     private String installedBy;
 
     /**
+     * The UUID of the user who installed this if it's set to be for that user only.
+     */
+    private String userLock;
+
+    /**
      * The version installed for this Instance.
      */
     private String version;
@@ -175,7 +180,7 @@ public class Instance implements Cloneable {
      * @param name               the name of the Instance
      * @param pack               the name of the Pack this Instance is of
      * @param realPack           the Pack object for the Pack this Instance is of
-     * @param installJustForMe   if this instance is only meant to be used by the original installer
+     * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
@@ -191,10 +196,10 @@ public class Instance implements Cloneable {
      * @param isPlayable         if this instance is playable
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
-                    boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+                    String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -213,10 +218,10 @@ public class Instance implements Cloneable {
         this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
-        if (installJustForMe) {
-            this.installedBy = App.settings.getAccount().getMinecraftUsername();
+        if (enableUserLock && !App.settings.getAccount().isUUIDNull()) {
+            this.userLock = App.settings.getAccount().getUUIDNoDashes();
         } else {
-            this.installedBy = null;
+            this.userLock = null;
         }
         this.isConverted = true;
     }
@@ -227,7 +232,7 @@ public class Instance implements Cloneable {
      * @param name               the name of the Instance
      * @param pack               the name of the Pack this Instance is of
      * @param realPack           the Pack object for the Pack this Instance is of
-     * @param installJustForMe   if this instance is only meant to be used by the original installer
+     * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
@@ -242,11 +247,11 @@ public class Instance implements Cloneable {
      * @param isDev              if this Instance is using a dev version of the pack
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
-                    boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+                    String assets, boolean isDev, boolean newLaunchMethod) {
+        this(name, pack, realPack, enableUserLock, version, minecraftVersion, memory, permgen, mods, jarOrder,
                 librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
     }
 
@@ -958,13 +963,33 @@ public class Instance implements Cloneable {
         }
 
         // Check to see if this was a private Instance belonging to a specific user only.
-        if (this.installedBy != null && !App.settings.getAccount().getMinecraftUsername().equalsIgnoreCase(this
-                .installedBy)) {
+        if (this.userLock != null && !App.settings.getAccount().getUUIDNoDashes().equalsIgnoreCase(this
+                .userLock)) {
             return false;
         }
 
         // All good, no false returns yet so allow it.
         return true;
+    }
+
+    public String getInstalledBy() {
+        return this.installedBy;
+    }
+
+    public void removeInstalledBy() {
+        this.installedBy = null;
+    }
+
+    public String getUserLock() {
+        return this.userLock;
+    }
+
+    public void removeUserLock() {
+        this.userLock = null;
+    }
+
+    public void setUserLock(String lock) {
+        this.userLock = lock;
     }
 
     /**
@@ -1158,7 +1183,7 @@ public class Instance implements Cloneable {
                             App.settings.getParent().setVisible(true);
                         }
                         long end = System.currentTimeMillis();
-                        if (App.settings.isInOfflineMode()) {
+                        if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
                             App.settings.checkOnlineStatus();
                         }
                         int exitValue = 0; // Assume we exited fine
